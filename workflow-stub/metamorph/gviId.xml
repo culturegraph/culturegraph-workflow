@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metamorph xmlns="http://www.culturegraph.org/metamorph" version="1">
+    <rules>
+        <!--
+        GVI Identifier Schema
+        See also: https://github.com/gemeinsamerverbuendeindex/gvi/blob/master/solrmarc/index_java/src/org/gvi/solrmarc/index/GVIIndexer.java#L555     
+         -->
+        <combine name="idn" value="(${catalog})${id}">
+            <data source="001" name="id"/>
+            <!-- vendor: the code of the organisation that provided the record -->
+            <choose name="catalog">
+                <!-- MARC code for the organization whose control number is contained in field 001 -->
+                <data source="003">
+                    <regexp match="(.{1,6})" format="${1}"/>
+                    <occurrence only="1"/>
+                </data>
+                <data source="040  .a">
+                    <occurrence only="1"/>
+                </data>
+                <data source="001">
+                    <regexp match="^BV" format="DE-604"/>
+                </data>
+                <data source="001">
+                    <constant value="UNDEFINED"/>
+                </data>
+            </choose>
+        </combine>
+    </rules>
+</metamorph>
+

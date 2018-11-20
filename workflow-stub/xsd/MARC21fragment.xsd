@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema  xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://culturegraph.org/MARC21fragment"	
+	xmlns:tns="http://culturegraph.org/MARC21fragment"
+	elementFormDefault="qualified" 
+	attributeFormDefault="unqualified"
+	version="1.1" xml:lang="en">
+	
+	<annotation>
+		<documentation>
+			MARCXML Fragment Schema
+			by Christoph Böhme, German National Library
+			
+			This is a modification of the MARCXML schema for MARC 21 which makes all
+			element available as root level elements. This allows to embed fragments
+			of MARC 21 records into other xml schemas.
+			
+			The original MARCXML schema is available from 
+			http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd
+			
+			== Original file comment (without changelog) ==
+			
+			MARCXML: The MARC 21 XML Schema
+			Prepared by Corey
+			Keith
+
+			This schema supports XML markup of MARC21 records as specified in the MARC
+			documentation (see www.loc.gov). It allows tags with
+			alphabetics and
+			subfield codes that are symbols, neither of which are as yet used in
+			the MARC 21 communications formats, but are
+			allowed by MARC 21 for local data. The schema accommodates all types of MARC
+			21 records: bibliographic, holdings, bibliographic
+			with embedded holdings, authority, classification, and community
+			information.
+		</documentation>
+	</annotation>
+
+	<element name="leader" type="tns:leaderFieldType" id="leader.e">	
+        <annotation>
+			<documentation>the leader element contains the 24 bytes of the 
+			MARC21 Leader.</documentation>
+		</annotation>
+    </element>
+
+	<element name="controlfield" type="tns:controlFieldType" id="controlfield.e">
+        <annotation>
+			<documentation>the controlfield element is for the MARC21 Fields 
+			001-009</documentation>
+		</annotation>
+    </element>
+
+	<element name="subfield" type="tns:subfieldatafieldType" id="subfield.e">
+        <annotation>
+			<documentation>subfield elements are placed in datafield elements
+			</documentation>
+		</annotation>
+    </element>
+
+	<element name="datafield" type="tns:dataFieldType" id="datafield.e">
+        <annotation>
+			<documentation>the datafield element is for the MARC21 Variable 
+			Data Fields 010-999</documentation>
+		</annotation>
+    </element>
+
+	<element name="record" type="tns:recordType" nillable="true" id="record.e">
+        <annotation>
+			<documentation>record is a top level container element for all of
+				the field elements which compose the record</documentation>
+		</annotation>
+    </element>
+
+	<element name="collection" type="tns:collectionType" nillable="true" id="collection.e">
+        <annotation>
+			<documentation>collection is a top level container element for 0
+				or many records</documentation>
+		</annotation>
+    </element>
+
+	<complexType name="collectionType" id="collection.ct">
+		<sequence minOccurs="0" maxOccurs="unbounded">
+			<element ref="tns:record" />
+		</sequence>
+		<attribute name="id" type="tns:idDataType" use="optional" />
+	</complexType>
+
+	<complexType name="recordType" id="record.ct">
+		<sequence minOccurs="0">
+			<element ref="tns:leader" />
+			<element ref="tns:controlfield" minOccurs="0" maxOccurs="unbounded" />
+			<element ref="tns:datafield" minOccurs="0" maxOccurs="unbounded" />
+		</sequence>
+		<attribute name="type" type="tns:recordTypeType" use="optional" />
+		<attribute name="id" type="tns:idDataType" use="optional" />
+	</complexType>
+
+	<simpleType name="recordTypeType" id="type.st">
+		<restriction base="NMTOKEN">
+			<enumeration value="Bibliographic" />
+			<enumeration value="Authority" />
+			<enumeration value="Holdings" />
+			<enumeration value="Classification" />
+			<enumeration value="Community" />
+		</restriction>
+	</simpleType>
+
+	<complexType name="leaderFieldType" id="leader.ct">
+		<annotation>
+			<documentation>MARC21 Leader, 24 bytes</documentation>
+		</annotation>
+		<simpleContent>
+			<extension base="tns:leaderDataType">
+				<attribute name="id" type="tns:idDataType" use="optional" />
+			</extension>
+		</simpleContent>
+	</complexType>
+
+	<simpleType name="leaderDataType" id="leader.st">
+		<restriction base="string">
+			<whiteSpace value="preserve" />
+			<pattern value="[\d ]{5}[\dA-Za-z ]{1}[\dA-Za-z]{1}[\dA-Za-z ]{3}(2| )(2| )[\d ]{5}[\dA-Za-z ]{3}(4500|    )" />
+		</restriction>
+	</simpleType>
+
+	<complexType name="controlFieldType" id="controlfield.ct">
+		<annotation>
+			<documentation>MARC21 Fields 001-009</documentation>
+		</annotation>
+		<simpleContent>
+			<extension base="tns:controlDataType">
+				<attribute name="id" type="tns:idDataType" use="optional" />
+				<attribute name="tag" type="tns:controltagDataType" use="required" />
+			</extension>
+		</simpleContent>
+	</complexType>
+
+	<simpleType name="controlDataType" id="controlfield.st">
+		<restriction base="string">
+			<whiteSpace value="preserve" />
+		</restriction>
+	</simpleType>
+
+	<simpleType name="controltagDataType" id="controltag.st">
+		<restriction base="string">
+			<whiteSpace value="preserve" />
+			<pattern value="00[1-9A-Za-z]{1}" />
+		</restriction>
+	</simpleType>
+
+	<complexType name="dataFieldType" id="datafield.ct">
+		<annotation>
+			<documentation>MARC21 Variable Data Fields 010-999
+			</documentation>
+		</annotation>
+		<sequence maxOccurs="unbounded">
+			<element ref="tns:subfield" />
+		</sequence>
+		<attribute name="id" type="tns:idDataType" use="optional" />
+		<attribute name="tag" type="tns:tagDataType" use="required" />
+		<attribute name="ind1" type="tns:indicatorDataType" use="required" />
+		<attribute name="ind2" type="tns:indicatorDataType" use="required" />
+	</complexType>
+
+	<simpleType name="tagDataType" id="tag.st">
+		<restriction base="string">
+			<whiteSpace value="preserve" />
+			<pattern value="(0([1-9A-Z][0-9A-Z])|0([1-9a-z][0-9a-z]))|(([1-9A-Z][0-9A-Z]{2})|([1-9a-z][0-9a-z]{2}))" />
+		</restriction>
+	</simpleType>
+
+	<simpleType name="indicatorDataType" id="ind.st">
+		<restriction base="string">
+			<whiteSpace value="preserve" />
+			<pattern value="[\da-z ]{1}" />
+		</restriction>
+	</simpleType>
+
+	<complexType name="subfieldatafieldType" id="subfield.ct">
+		<simpleContent>
+			<extension base="tns:subfieldDataType">
+				<attribute name="id" type="tns:idDataType" use="optional" />
+				<attribute name="code" type="tns:subfieldcodeDataType" use="required" />
+			</extension>
+		</simpleContent>
+	</complexType>
+
+	<simpleType name="subfieldDataType" id="subfield.st">
+		<restriction base="string">
+			<whiteSpace value="preserve" />
+		</restriction>
+	</simpleType>
+
+	<simpleType name="subfieldcodeDataType" id="code.st">
+		<restriction base="string">
+			<whiteSpace value="preserve" />
+			<pattern value="[\dA-Za-z!&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?{}_^`~\[\]\\]{1}" />
+		</restriction>
+	</simpleType>
+
+	<simpleType name="idDataType" id="id.st">
+		<restriction base="ID" />
+	</simpleType>
+
+</schema>

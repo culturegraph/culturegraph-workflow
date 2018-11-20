@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metamorph xmlns="http://www.culturegraph.org/metamorph" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.culturegraph.org/metamorph metamorph.xsd" entityMarker="." version="1">
+    <meta>
+        <name>Excerpt</name>
+        <annotation>Reads a subset of fields from a marc21 record.</annotation>
+    </meta>
+    <rules>
+        <!--
+        GVI Identifier Schema
+        See also: https://github.com/gemeinsamerverbuendeindex/gvi/blob/master/solrmarc/index_java/src/org/gvi/solrmarc/index/GVIIndexer.java#L555     
+         -->
+        <combine name="idn" value="(${catalog})${id}">
+            <data source="001" name="id"/>
+            <!-- vendor: the code of the organisation that provided the record -->
+            <choose name="catalog">
+                <!-- MARC code for the organization whose control number is contained in field 001 -->
+                <data source="003">
+                    <regexp match="(.{1,6})" format="${1}"/>
+                    <occurrence only="1"/>
+                </data>
+                <data source="040  .a">
+                    <occurrence only="1"/>
+                </data>
+                <data source="001">
+                    <regexp match="^BV" format="DE-604"/>
+                </data>
+                <data source="001">
+                    <constant value="UNDEFINED"/>
+                </data>
+            </choose>
+        </combine>
+
+        <!-- 001 - Control Number, 003 - Control Number Identifier -->
+        <entity name="001|003|008" reset="true" sameEntity="false">
+            <entity-name>
+                <data source="001|003|008">
+                    <switch-name-value/>
+                    <compose prefix="controlfield_"/>
+                </data>
+            </entity-name>
+            <group>
+                <data source="001|003|008">
+                    <switch-name-value/>
+                    <compose prefix="field_"/>
+                    <switch-name-value/>
+                </data>
+            </group>
+        </entity>
+
+        <!-- 035 - System Control Number -->
+        <entity name="035??" reset="true" sameEntity="false">
+            <entity-name>
+                <data source="035??">
+                    <switch-name-value/>
+                    <compose prefix="datafield_"/>
+                    <replace pattern="[ ]" with="_"/>
+                </data>
+            </entity-name>
+            <group>
+                <data source="035??.?">
+                    <switch-name-value/>
+                    <substring start="6" end="7"/>
+                    <compose prefix="subfield_"/>
+                    <switch-name-value/>
+                </data>
+            </group>
+        </entity>
+
+        <!-- 040 - Cataloging Source -->
+        <entity name="040??" reset="true" sameEntity="false">
+            <entity-name>
+                <data source="040??">
+                    <switch-name-value/>
+                    <compose prefix="datafield_"/>
+                    <replace pattern="[ ]" with="_"/>
+                </data>
+            </entity-name>
+            <group>
+                <data source="040??.?">
+                    <switch-name-value/>
+                    <substring start="6" end="7"/>
+                    <compose prefix="subfield_"/>
+                    <switch-name-value/>
+                </data>
+            </group>
+        </entity>
+
+        <!-- 41 - Language Code -->
+        <entity name="041??" reset="true" sameEntity="false">
+            <entity-name>
+                <data source="041??">
+                    <switch-name-value/>
+                    <compose prefix="datafield_"/>
+                    <replace pattern="[ ]" with="_"/>
+                </data>
+            </entity-name>
+            <group>
+                <data source="041??.?">
+                    <switch-name-value/>
+                    <substring start="6" end="7"/>
+                    <compose prefix="subfield_"/>
+                    <switch-name-value/>
+                </data>
+            </group>
+        </entity>
+
+        <!-- 82 - Dewey Decimal Classification Number, 83 - Additional Dewey Decimal Classification Number, 84 - Other Classification Number -->
+        <entity name="082??|083??|084??" reset="true" sameEntity="false">
+            <entity-name>
+                <data source="082??|083??|084??">
+                    <switch-name-value/>
+                    <compose prefix="datafield_"/>
+                    <replace pattern="[ ]" with="_"/>
+                </data>
+            </entity-name>
+            <group>
+                <data source="082??.?|083??.?|084??.?">
+                    <switch-name-value/>
+                    <substring start="6" end="7"/>
+                    <compose prefix="subfield_"/>
+                    <switch-name-value/>
+                </data>
+            </group>
+        </entity>
+
+        <!-- 100 - Heading-Personal Name, 110 - Heading-Corporate Name, 111 - Heading-Meeting Name -->
+        <entity name="100??|110??|111??" reset="true" sameEntity="false">
+        <entity-name>
+            <data source="100??|110??|111??">
+            <switch-name-value/>
+            <compose prefix="datafield_"/>
+            <replace pattern="[ ]" with="_"/>
+            </data>
+        </entity-name>
+        <group>
+            <data source="100??.?|110??.?|111??.?">
+            <switch-name-value/>
+            <substring start="6" end="7"/>
+            <compose prefix="subfield_"/>
+            <switch-name-value/>
+            </data>
+        </group>
+        </entity>
+
+        <!-- 245 - Title Statement, 246 - Varying Form of Title -->
+        <entity name="245??|246??" reset="true" sameEntity="false">
+        <entity-name>
+            <data source="245??|246??">
+            <switch-name-value/>
+            <compose prefix="datafield_"/>
+            <replace pattern="[ ]" with="_"/>
+            </data>
+        </entity-name>
+        <group>
+            <data source="245??.?|246??.?">
+            <switch-name-value/>
+            <substring start="6" end="7"/>
+            <compose prefix="subfield_"/>
+            <switch-name-value/>
+            </data>
+        </group>
+        </entity>
+
+        <!-- 130 - Main Entry-Uniform Title, 240 - Uniform Title, 730 -  Added Entry-Uniform Title -->
+        <entity name="130??|240??|730??" reset="true" sameEntity="false">
+        <entity-name>
+            <data source="130??|240??|730??">
+            <switch-name-value/>
+            <compose prefix="datafield_"/>
+            <replace pattern="[ ]" with="_"/>
+            </data>
+        </entity-name>
+        <group>
+            <data source="130??.a|240??.a|730??.a">
+            <switch-name-value/>
+            <substring start="6" end="7"/>
+            <compose prefix="subfield_"/>
+            <switch-name-value/>
+            </data>
+        </group>
+        </entity>
+
+        <!--  6XX - Subject Access Fields-General Information -->
+        <entity name="6????" reset="true" sameEntity="false">
+            <entity-name>
+                <data source="6????">
+                    <switch-name-value/>
+                    <compose prefix="datafield_"/>
+                    <replace pattern="[ ]" with="_"/>
+                </data>
+            </entity-name>
+            <group>
+                <data source="6????.?">
+                    <switch-name-value/>
+                    <substring start="6" end="7"/>
+                    <compose prefix="subfield_"/>
+                    <switch-name-value/>
+                </data>
+            </group>
+        </entity>
+
+
+        <!-- 700 - Added Entry-Personal Name, 710 - Added Entry-Corporate Name, 711 - Added Entry-Meeting Name -->
+        <entity name="700??|710??|711??" reset="true" sameEntity="false">
+        <entity-name>
+            <data source="700??|710??|711??">
+            <switch-name-value/>
+            <compose prefix="datafield_"/>
+            <replace pattern="[ ]" with="_"/>
+            </data>
+        </entity-name>
+        <group>
+            <data source="700??.?|710??.?|711??.?">
+            <switch-name-value/>
+            <substring start="6" end="7"/>
+            <compose prefix="subfield_"/>
+            <switch-name-value/>
+            </data>
+        </group>
+        </entity>
+
+        <!-- 883 - Machine-generated Metadata Provenance -->
+        <entity name="883??" reset="true" sameEntity="false">
+            <entity-name>
+                <data source="883??">
+                    <switch-name-value/>
+                    <compose prefix="datafield_"/>
+                    <replace pattern="[ ]" with="_"/>
+                </data>
+            </entity-name>
+            <group>
+                <data source="883??.?">
+                    <switch-name-value/>
+                    <substring start="6" end="7"/>
+                    <compose prefix="subfield_"/>
+                    <switch-name-value/>
+                </data>
+            </group>
+        </entity>
+    </rules>
+
+    <maps>
+        <map name="replacements">
+            <entry name=" " value="_" />
+        </map>
+    </maps>
+</metamorph>

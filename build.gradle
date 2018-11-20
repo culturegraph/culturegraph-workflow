@@ -1,0 +1,19 @@
+subprojects {
+    apply plugin: 'java'
+
+    group 'org.culturegraph'
+
+    version '0.2.0'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}

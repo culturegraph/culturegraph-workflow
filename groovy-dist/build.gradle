@@ -1,0 +1,78 @@
+plugins {
+    id 'groovy'
+    id 'java-library'
+    id 'distribution'
+}
+
+dependencies {
+    api project(':layers')
+    implementation 'com.github.culturegraph:culturegraph-clustering:v0.2.0'
+    implementation 'com.github.culturegraph:culturegraph-record-aggregator:v0.2.0'
+    implementation 'com.github.metafacture:metafacture-csv-plugin:v0.4.0'
+    implementation 'de.odysseus.staxon:staxon:1.3'
+    implementation 'org.codehaus.groovy:groovy-all:2.5.2'
+    implementation 'org.metafacture:metafacture-biblio:5.0.0'
+    implementation 'org.metafacture:metafacture-flowcontrol:5.0.0'
+    implementation 'org.metafacture:metafacture-io:5.0.0'
+    implementation 'org.metafacture:metafacture-strings:5.0.0'
+    implementation 'org.metafacture:metafacture-xml:5.0.0'
+    implementation 'org.metafacture:metamorph:5.0.0'
+    testImplementation 'junit:junit:4.12'
+}
+
+task distGroovy(type: Jar) {
+    group = 'distribution'
+
+    compileGroovy.enabled = false
+    dependencies {
+        compile project(':layers')
+
+        compile('org.codehaus.groovy:groovy-all:2.5.2') {
+            exclude group: 'org.codehaus.groovy', module: 'groovy-test'
+            exclude group: 'org.codehaus.groovy', module: 'groovy-test-junit5'
+            exclude group: 'org.codehaus.groovy', module: 'groovy-test-testng'
+            exclude group: 'org.codehaus.groovy', module: 'groovy-console'
+            exclude group: 'org.codehaus.groovy', module: 'groovy-groovysh'
+            exclude group: 'org.codehaus.groovy', module: 'groovy-groovydoc'
+            exclude group: 'org.codehaus.groovy', module: 'groovy-docgenerator'
+            exclude group: 'org.codehaus.groovy', module: 'groovy-swing'
+            exclude group: 'org.codehaus.groovy', module: 'groovy-ant'
+        }
+
+        compile 'com.github.culturegraph:culturegraph-clustering:v0.2.0'
+        compile 'com.github.culturegraph:culturegraph-record-aggregator:v0.2.0'
+        compile 'com.github.metafacture:metafacture-csv-plugin:v0.4.0'
+        compile 'de.odysseus.staxon:staxon:1.3'
+        compile 'org.metafacture:metafacture-biblio:5.0.0'
+        compile 'org.metafacture:metafacture-io:5.0.0'
+        compile 'org.metafacture:metafacture-strings:5.0.0'
+        compile 'org.metafacture:metafacture-xml:5.0.0'
+        compile 'org.metafacture:metamorph:5.0.0'
+        compile 'org.slf4j:slf4j-simple:1.7.25'
+
+    }
+
+    description = 'Assembles a jar archive containing Groovy Scripts with dependencies.'
+
+    from files('src/main/groovy/org/culturegraph/script')
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA', 'SAXCONICA.*'
+    with jar
+}
+
+task distZip(type: Zip, overwrite: true, dependsOn: ['distGroovy']) {
+    group = 'distribution'
+
+    description = 'Assembles a zip archive for project distribution.'
+
+    baseName = 'culturegraph' + '-' + parent.name
+    from project.parent.fileTree('workflow-stub')
+    from fileTree('resources')
+
+    from ('src/main/groovy/org/culturegraph/script') { into 'scripts' }
+    from (project.parent.file('docs/build/asciidoc/pdf/manual.pdf')) { into 'docs'}
+    from (project.parent.file('docs/build/asciidoc/docbook/manual.xml')) { into 'docs'}
+    from (tasks.distGroovy.archivePath) {
+        into 'lib'
+    }
+}

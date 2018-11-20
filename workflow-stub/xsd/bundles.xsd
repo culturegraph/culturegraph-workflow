@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://culturegraph.org/bundles"
+	xmlns:tns="http://culturegraph.org/bundles" 
+	xmlns:marc21="http://culturegraph.org/MARC21fragment" 
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	<import namespace="http://culturegraph.org/MARC21fragment" 
+		schemaLocation="MARC21fragment.xsd" />
+	
+	<element name="bundles">
+		<annotation>
+			<documentation>
+				Root element of the Culturegraph Bundles XML Schema. 
+				It contains a list of bundles.
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element ref="tns:bundle" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="bundle">
+		<annotation>
+			<documentation>
+				A bundle groups bibliographic records which are considered to 
+				describe the same concept (manifestation, work etc.). Each
+				bundle is has a unique bundle reference and a reference to the 
+				algorithm that was used to construct the bundle.
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element ref="tns:marc21-excerpt" minOccurs="0" maxOccurs="unbounded" />
+			</sequence>
+			<attribute name="ref" type="anyURI" use="required" />
+			<attribute name="algorithm" type="anyURI" use="required" />
+		</complexType>
+	</element>
+	
+	<element name="marc21-excerpt">
+		<annotation>
+			<documentation>
+				An excerpt contains fields extracted from a bibliographic record. Each excerpt
+				has a reference linking the excerpt to the original record. The reference is a
+				URL consisting of the prefix http://hub.culturegraph.org/resource/ followed by
+				a library union identifier, a dash and a bibliographic record identifier in the
+				cataloging system of the aforementioned library union identifier. The excerpt 
+				is defined in MarcXML using the MARC21fragment schema which his a modified 
+				version of the original Marc21slim-Schema from the Library of Congress.
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element ref="marc21:controlfield" minOccurs="0" maxOccurs="unbounded" />
+				<element ref="marc21:datafield" minOccurs="0" maxOccurs="unbounded" />				
+			</sequence>
+			<attribute name="ref" type="anyURI" use="required" />
+			</complexType>		
+	</element>
+
+</schema>

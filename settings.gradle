@@ -1,0 +1,4 @@
+rootProject.name = 'culturegraph-workflow'
+include 'docs'
+include 'groovy-dist'
+include 'layers'

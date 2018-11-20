@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundles xmlns="http://culturegraph.org/bundles"
+    xmlns:marc21="http://culturegraph.org/MARC21fragment"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://culturegraph.org/bundles bundles.xsd http://culturegraph.org/MARC21fragment MARC21fragment.xsd">
+     
+    <bundle ref="http://hub.culturegraph.org/resource/wrk$9783775725828-I-X"
+        algorithm="http://hub.culturegraph.org/statistics/alg/wrk">
+         
+        <marc21-excerpt ref="http://hub.culturegraph.org/resource/BSZ-318759756">
+            <marc21:datafield tag="084" ind1=" " ind2=" ">
+                <marc21:subfield code="a">LH 29912</marc21:subfield>
+                <marc21:subfield code="2">rvk</marc21:subfield>
+            </marc21:datafield>
+            <marc21:datafield tag="084" ind1=" " ind2=" ">
+                <marc21:subfield code="a">LH 84958</marc21:subfield>
+                <marc21:subfield code="2">rvk</marc21:subfield>
+            </marc21:datafield>
+        </marc21-excerpt>
+        <marc21-excerpt ref="http://hub.culturegraph.org/resource/BVB-BV026759425">
+        </marc21-excerpt>
+        <marc21-excerpt ref="http://hub.culturegraph.org/resource/BVB-BV036115900">
+            <marc21:datafield tag="084" ind1=" " ind2=" ">
+                <marc21:subfield code="a">LH 29912</marc21:subfield>
+                <marc21:subfield code="2">rvk</marc21:subfield>
+            </marc21:datafield>
+            <marc21:datafield tag="084" ind1=" " ind2=" ">
+                <marc21:subfield code="a">LH 84958</marc21:subfield>
+                <marc21:subfield code="2">rvk</marc21:subfield>
+            </marc21:datafield>
+            <marc21:datafield tag="084" ind1=" " ind2=" ">
+                <marc21:subfield code="a">LI 95130</marc21:subfield>
+                <marc21:subfield code="2">rvk</marc21:subfield>
+            </marc21:datafield>
+        </marc21-excerpt>
+        <marc21-excerpt ref="http://hub.culturegraph.org/resource/BVB-BV038853566">
+        </marc21-excerpt>
+        <marc21-excerpt ref="http://hub.culturegraph.org/resource/DNB-997724587">
+        </marc21-excerpt>
+        <marc21-excerpt ref="http://hub.culturegraph.org/resource/GBV-612182010">
+            <marc21:datafield tag="084" ind1=" " ind2=" ">
+                <marc21:subfield code="a">LI 95130</marc21:subfield>
+                <marc21:subfield code="2">rvk</marc21:subfield>
+            </marc21:datafield>
+        </marc21-excerpt>
+        <marc21-excerpt ref="http://hub.culturegraph.org/resource/HBZ-HT016270927">
+        </marc21-excerpt>
+        <marc21-excerpt ref="http://hub.culturegraph.org/resource/OBV-AC07978858">
+            <marc21:datafield tag="084" ind1=" " ind2=" ">
+                <marc21:subfield code="a">LH 29912</marc21:subfield>
+                <marc21:subfield code="2">rvk</marc21:subfield>
+            </marc21:datafield>
+            <marc21:datafield tag="084" ind1=" " ind2=" ">
+                <marc21:subfield code="a">LH 84958</marc21:subfield>
+                <marc21:subfield code="2">rvk</marc21:subfield>
+            </marc21:datafield>
+            <marc21:datafield tag="084" ind1=" " ind2=" ">
+                <marc21:subfield code="a">LI 95130</marc21:subfield>
+                <marc21:subfield code="2">rvk</marc21:subfield>
+            </marc21:datafield>
+       </marc21-excerpt>
+    </bundle>
+</bundles>

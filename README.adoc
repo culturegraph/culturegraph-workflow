@@ -1,0 +1,38 @@
+= Culturegraph Workflows
+:TOC:
+
+Data transformation and processing workflows for CultureGraph.
+
+== Install
+
+=== Requirements
+
+* GNU Make
+* Java 8 or later
+
+=== Build
+
+Run the following command to build a distribution.
+
+----
+gradlew clean test distZip
+----
+
+The final archive `culturegraph-workflows-VERSION.zip` resides in `groovy-distribution\build\distributions`.
+
+== Quickstart
+
+* Unzip the distribution
+* Execute all workflows with test data (default behaviour)
+** `make all`
+
+== Documentation
+
+docs::
+The docs folder contains a documentation of the implemented workflows.
+
+Build a PDF with:
+
+----
+gradlew clean asciidoctor
+----

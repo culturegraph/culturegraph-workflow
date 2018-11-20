@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.jruby:jruby:1.7.24'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.8.1'
+        classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.11'
+    }
+}
+
+plugins {
+    id 'org.asciidoctor.convert' version '1.5.8.1'
+}
+
+apply plugin: 'org.asciidoctor.convert'
+
+asciidoctor {
+
+    sources {
+        include 'manual.adoc'
+    }
+
+    backends 'pdf', 'docbook'
+    attributes 'build-gradle': file('build.gradle'),
+            'source-highlighter': 'coderay',
+            'imagesdir': 'img',
+            'toc': 'left',
+            'note-caption': 'Notiz',
+            'icons': 'font',
+            'setanchors': '',
+            'idprefix': '',
+            'idseparator': '-',
+            'docinfo1': '',
+            'toc-title': 'Inhaltsverzeichnis',
+            'figure-caption': 'Abb.',
+            'table-caption': 'Tab.',
+            'lang': 'de',
+            'revnumber': project.version
+}

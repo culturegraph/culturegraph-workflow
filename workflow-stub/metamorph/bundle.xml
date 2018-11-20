@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metamorph xmlns="http://www.culturegraph.org/metamorph" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.culturegraph.org/metamorph metamorph.xsd" entityMarker="." version="1">
+    <meta>
+        <name>Excerpt</name>
+        <annotation>Reads a subset of fields from a marc21 record.</annotation>
+    </meta>
+    <rules>
+        <!--
+        GVI Identifier Schema
+        See also: https://github.com/gemeinsamerverbuendeindex/gvi/blob/master/solrmarc/index_java/src/org/gvi/solrmarc/index/GVIIndexer.java#L555     
+         -->
+        <combine name="idn" value="(${catalog})${id}">
+            <data source="001" name="id"/>
+            <!-- vendor: the code of the organisation that provided the record -->
+            <choose name="catalog">
+                <!-- MARC code for the organization whose control number is contained in field 001 -->
+                <data source="003">
+                    <regexp match="(.{1,6})" format="${1}"/>
+                    <occurrence only="1"/>
+                </data>
+                <data source="040  .a">
+                    <occurrence only="1"/>
+                </data>
+                <data source="001">
+                    <regexp match="^BV" format="DE-604"/>
+                </data>
+                <data source="001">
+                    <constant value="UNDEFINED"/>
+                </data>
+            </choose>
+        </combine>
+
+        <!-- Control Fields -->
+        <entity name="00?" reset="true" sameEntity="false">
+            <entity-name>
+                <data source="00?">
+                    <switch-name-value/>
+                    <compose prefix="controlfield_"/>
+                </data>
+            </entity-name>
+            <group>
+                <data source="00?">
+                    <switch-name-value/>
+                    <compose prefix="field_"/>
+                    <switch-name-value/>
+                </data>
+            </group>
+        </entity>
+
+        <!-- Datafields -->
+        <entity name="?????" reset="true" sameEntity="false">
+            <entity-name>
+                <data source="?????">
+                    <switch-name-value/>
+                    <compose prefix="datafield_"/>
+                    <replace pattern="[ ]" with="_"/>
+                </data>
+            </entity-name>
+            <group>
+                <data source="?????.?">
+                    <switch-name-value/>
+                    <substring start="6" end="7"/>
+                    <compose prefix="subfield_"/>
+                    <switch-name-value/>
+                </data>
+            </group>
+        </entity>
+
+    </rules>
+
+    <maps>
+        <map name="replacements">
+            <entry name=" " value="_" />
+        </map>
+    </maps>
+</metamorph>
