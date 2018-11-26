@@ -23,6 +23,15 @@ asciidoctor {
     }
 
     backends 'pdf', 'docbook'
+
+    resources {
+        from('src/docs/asciidoc/img') {
+            include '*.png'
+        }
+
+        into 'img'
+    }
+
     attributes 'build-gradle': file('build.gradle'),
             'source-highlighter': 'coderay',
             'imagesdir': 'img',
