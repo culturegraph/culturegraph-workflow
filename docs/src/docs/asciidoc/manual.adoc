@@ -3,4 +3,179 @@
 :imagesdir: img
 :doctype: book
 
-TODO
+
+
+== Einleitung
+
+
+=== Motivation
+
+
+=== Ziel
+
+Diese Projekt stellt eine Distribution zur Verfügung, welche eine Umgebung enthält die das Verarbeiten von Titeldaten automatisiert.
+Die Daten sollen mit verschiedenen Workflows verarbeitet werden, welche die Titeldaten transformieren und/oder analysieren und Ergebnisse zur Auslieferung aufbereiten. 
+
+<<<
+
+== Vorgehen
+
+=== Überblick
+
+.Überblick über die Workflow-Struktur
+image::overview.png[Gesamtüberblick, align="center"]
+
+Jeder Workflow besteht aus drei Schritten die im oben genannten Diagramm gezeigt sind.
+Die Import-Phase besteht im einfachten Fall aus dem Lesen von Daten aus einer Ablage (Datenhaltung) die nachfolgend verarbeitet werden. 
+Es könnten zusätzliche Vorverarbeitungsschritte hinzukommen.
+
+In der Analyse-Phase werden Algorithmen, Transformationen oder andere Verfahren ausgeführt die die importierten Daten nutzen um neues Wissen zu erzeugen.
+Die Export-Phase speichert die Ergebnisse in einem Datenformat.
+
+=== Workflows
+
+Nachfolgend werde die zentralen Workflows vorgesellt.
+
+* <<Schlüsselerzeugung>>
+* <<Bündelbildung (Clustering)>>
+* <<Auslieferung>>
+
+<<<
+
+==== Schlüsselerzeugung
+
+Der Workflow zur Schlüsselerzeugung verarbeitet Titeldaten im MARC21- oder MARCXML-Format.
+Für jeden Titeldatensatz wird in eine CSV-Zeile transformiert.
+Bei der Transformation wird der Datensatz mit Werkzeug link:https://github.com/metafacture/metafacture-core/wiki#morph[Metamorph] verarbeitet.
+
+Die beiden Metamorph Definitionsdateien `ingest.xml` und `wrk.xml` extrahieren spezifische Feldinhalte und kombinieren diese zu Schlüsseln.
+Die Auswahl der Feldinhalte ist in `ingest.xml` definiert. Die Kombination der Elemente zu Schlüssel erfolgt über die Datei `wrk.xml`, welche die Ausgabe von `ingest.xml` weiterverarbeitet.
+
+Die Ergebnisdatei enthält pro Zeile eine Id und die dazugehörigen Schlüssel.
+
+.Workflow Schlüsselerzeugung
+image::workflow-keys.png[Workflow Schlüsselerzeugung, pdfwidth="70%", align="center"]
+
+<<<
+
+==== Bündelbildung (Clustering)
+
+Der Workflow zur Bündelbildung footnote:[Auch _Clustering_ oder _Komponente_ genannt.] nimmt die Ausgabe des Workflows <<Schlüsselerzeugung>> entgegen und führt eine Cluster-Analyse durch.
+Hierbei wird die Schlüsseldatei als Adjazenzliste interpretiert und eine Graph-Modell erzeugt.
+Es wird ein bipartiter Graph erzeugt, der die Beziehung zwischen Id und Schlüssel für jeden Datensatz abbildet.
+
+Haben zwei verschiedene Datensätze einen Schlüssel gemein, sind diese folglich über eine Kante verbunden.
+Durch eine Breitensuche können alle Zusammenhangskomponenten im Graph ermittelt werden.
+Der Ergebnisgraph der Breitensuche wird im Format GraphML abgelegt.
+In diesem sind alle Kanten und Knoten die zu eine Komponenten gehören über ein eindeutiges Label gekennzeichnet.
+
+Das finale Mapping wird durch filtern der GraphML-Datei erzeugt und enthält für jede Id ein Label, welches die zugehörige Komponenten kennzeichnet. 
+
+.Workflow der Bündelbildung
+image::workflow-cluster.png[Workflow zur Bündelbildung, pdfwidth="90%", align="center"]
+
+<<<
+
+==== Auslieferung
+
+Der Workflow zur Erzeugung des Auslieferungsformates verkürzt zunächst alle Titeldatensätze auf eine Feldauswahl,
+hierzu wird ebenfalls link:https://github.com/metafacture/metafacture-core/wiki#morph[Metamorph] genutzt.
+Es wird eine CSV-Datei erzeugt die für jeden Titeldatensatz pro Zeile eine Id und den verkürzten MARC21-Satz enthält. 
+Die Id wird über die Metamorph-Datei `id.xml` erzeugt. Die Feldauswahl für den verkürzten Datensatz ist in `excerpt.xml` definiert.
+
+Die Ergebnisse aus dem Schritt <<Bündelbildung (Clustering)>> werden genutzt um die zuvor erzeugte CSV-Datei mit der zugehörigen Cluster-Zuordnung zu versehen.
+Wird die CSV-Datei nach der Zuordnung sortiert (_Sortieren nach Bündelung_), stehen alle verkürzten MARC-Sätze untereinader die zum gleichen Cluster gehören.
+
+Die so aufbereiteten Daten können nachfolgend in zwei verschiedene Ausgabeformate umgewandelt werden.
+Das Ausgabeformat des Prozesses _Bündel-XML erzeugen_ erzeugte eine XML Datei die für jedes Bündel ein XML Element enthält, welches fortlaufend alle Datensätze als MARCXML enthält.
+
+Alternativ kann mit dem Prozess _MARCXML erzeugen_ ein MARCXML-Dokument erzeugt werden, welches alle Informationen eines Bündels in einen MARXML-Record Element aggregiert.
+Das XML enthält somit genau so viele Records, wie Bündel gefunden wurden. Eine genau Beschreibung des Vorgehens ist auf der link:https://github.com/culturegraph/culturegraph-record-aggregator[Projekseite] zu finden.
+
+[#img-workflow-bundle-export]
+.Workflow Auslieferung
+image::workflow-bundle-export.png[Workflow für das Auslieferungsformat, pdfwidth="100%", align="center"]
+
+<<<
+
+== Technische Realisierung
+
+=== Umgebung
+
+Damit das Projekt nutzbar ist, sind folgende Komponenten notwendig:
+
+* GNU Make
+* Java 8 (oder höher)
+
+=== Aufbau des Software-Projektes
+
+Das Projekt teilt sich in zwei Komponenten, zum einen in eine Java-Komponente und zum anderen in eine Konfigurationskomponente.
+Die Java-Komponente des Projektes besteht aus einem Java-Projekt, welches das Build Tool link:https://gradle.org[gradle] nutzt.
+Das Java-Projekt implementiert Programme die Aufgaben in den beschriebenen Workflows umsetzten. 
+
+Die Aufgaben für die Workflows sind als Skripte in der JVM Programmiersprache link:http://groovy-lang.org/[groovy] realisiert.
+Die notwendigen Bibliotheken die von den Skripten benötigt werden sind in Java geschrieben und im Projekt enthalten oder über das Build Tool verlinkt.
+
+Die Konfigurations-Komponente ist eigenständig im Java-Projekt enthalten und enthält alle Konfigurationsdateien die im Projekt benötigt werden.
+Die Konfiguration umfasst Konfigurationsdateien für die (oben erwähnten) Programme, wie auch die Definition der Workflows.
+
+Die Definition der Workflows erfolgt mit dem Werkzeug _GNU Make_, einem System zum bauen von Software.
+Dabei kann das Ergebnis eines Baus (engl. _Build_ genannt) auch eine Datei sein.
+Ein _Makefile_ beschreibt eine Menge von Regeln die Aufgaben und deren Abhängigkeiten definieren.
+In der Konfigurations-Komponente ist ein Makefile enthalten, welches die vorgestellten Workflows implementiert.
+
+Die Auslieferung der eigenständigen Distribution ist im folgenden Abschnitt erklärt.
+
+<<<
+
+=== Distribution
+
+Die Verteilung der Software-Distribution die alle Komponenten enthält (JAR, Konfigurationsdateien und das Makefile) wird als ZIP-Archiv ausgeliefert. Der für die Groovy Skripte notwendige Groovy Interpreter und alle Java Abhängigkeiten sind ebenfalls im JAR enthalten.
+
+Das ZIP-Archiv kann entpackt werden und enthält alle Abhängigkeiten die notwendig sind um das beigefügte Makefile auszuführen.
+Lediglich die Betriebsumgebung muss die Anforderungen im Abschnitt <<#umgebung>> erfüllen.
+
+
+.Schematischer Aufbau der Distribution
+image::distribution-structure.png[pdfwidth="80%", width="80%", align="center"]
+
+== Anhang
+
+=== Verwendete Software
+
+* Diagramme im Format `.graphml` wurden mit link:https://www.yworks.com/downloads#yEd[yEd] erstellt
+* Diagramme im Format `.drawio.xml` wurden mit link:https://www.draw.io/[draw.io] erstellt
+
+=== Erstellen der Dokumentation
+
+----
+./gradlew clean asciidoctor
+----
+
+Die Dokumentation wird als Docbook und PDF erzeugt.
+Das Ergebnis befindet sich im Ordner `docs/build/asciidoc/pdf`.
+
+==== Docx Ausgabe (Word)
+
+Mit der Docbook Ausgabe kann via link:https://pandoc.org/[pandoc] ein Docx Dokument (Word) erzeugt werden.
+
+[source,bash]
+----
+cd docs/build/asciidoc/docbook
+pandoc -s -f docbook -o manual.docx manual.xml
+----
+
+=== Graph Analyse
+
+Die GraphML Ausgabe eignet auch um einzelne Komponenten zu analysieren.
+
+Durch die Statistik der Clustergrößen kann man für jede Cluster/Komponenten Id die jeweilige Größe herausfinden.
+
+----
+# Jede Kante und jeder Knoten besitzen ein Attribute das die Nummer der Komponente (hier d1) enthält.
+# Der Anfang der XML Dokumentes entält die Metadaten für die jeweiligen Kanten- und Knoten-Attribute.
+zcat cluster.graphml.gz | head -5 > cluster17.graphml
+zcat cluster.graphml.gz | grep "d1\">17<" >> cluster17.graphml
+echo "</graph>" >> cluster17.graphml
+echo "</graphml>" >> cluster17.graphml
+----
