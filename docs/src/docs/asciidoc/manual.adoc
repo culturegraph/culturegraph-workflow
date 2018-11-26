@@ -7,8 +7,25 @@
 
 == Einleitung
 
+Im Rahmen des Projektes link:http://www.culturegraph.org[Culturegraph],
+stehen Titeldaten der Verbünde
 
-=== Motivation
+* Britische Nationalbibliothek/British National Bibliography (BNB)
+* Bibliotheksverbund Bayern (BVB) und Kooperativer Bibliotheksverbund Berlin-Brandenburg (KOBV)
+* Deutsche Nationalbibliothek (DNB)
+* Gemeinsamer Bibliotheksverbund (GBV)
+* Hochschulbibliothekszentrum des Landes Nordrhein-Westfalen (hbz)
+* Hessisches BibliotheksInformationsSystem (HeBIS)
+* Österreichischer Bibliothekenverbund (OBV)
+* Südwestdeutscher Bibliotheksverbund (SWB/BSZ)
+
+
+zur Verfügung.
+
+Die Deutsche Nationalbiliothek nutzt ein Cluster-Verfahren
+um Titeldaten die das selbe Konzept (Manifestation, Werk, etc.) umschreiben
+(nach FRBR footnote:[Vgl. link:https://www.loc.gov/catdir/cpso/FRBRGerman.pdf[PDF]])
+zu gruppieren.
 
 
 === Ziel
@@ -39,6 +56,8 @@ Nachfolgend werde die zentralen Workflows vorgesellt.
 * <<Schlüsselerzeugung>>
 * <<Bündelbildung (Clustering)>>
 * <<Auslieferung>>
+
+NOTE: Ein genaue Beschreibung der Workflows sind im *Makefile* und im *Readme* zu finden.
 
 <<<
 
