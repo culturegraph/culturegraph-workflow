@@ -29,12 +29,12 @@ RULE := $(or $(RULE), wrk)
 # JVM_OPTS
 # JVM setting for default java tasks
 #
-JVM_OPTS = -Dorg.slf4j.simpleLogger.defaultLogLevel=off -Dorg.slf4j.simpleLogger.logFile=System.err -Dfile.encoding=UTF-8 -Xmx2g
+JVM_OPTS = -Xmx2g -Dfile.encoding=UTF-8 -Dorg.slf4j.simpleLogger.defaultLogLevel=off -Dorg.slf4j.simpleLogger.logFile=System.err 
 
 # JVM_OPTS_HEAVY
 # JVM settings for computational intensive java tasks
 #
-JVM_OPTS_HEAVY = -Dorg.slf4j.simpleLogger.defaultLogLevel=off -Dfile.encoding=UTF-8 -Xmx12g -XX:+UseCompressedOops -XX:+UseG1GC
+JVM_OPTS_HEAVY = -Xmx12g -XX:+UseCompressedOops -XX:+UseG1GC -Dfile.encoding=UTF-8 -Dorg.slf4j.simpleLogger.defaultLogLevel=off -Dorg.slf4j.simpleLogger.logFile=System.err
 
 # GROOVYJAR
 # Jar that provides a standalone environment for a collection of groovy scripts.
@@ -62,13 +62,13 @@ script=./scripts/$(1)
 false-if-empty=if [ -f $(1) ] && [ $$(gunzip -c $(1) | head -c1 | wc -c) -eq 0 ] && echo "File $(1) is empty."; then false; fi;
 
 help:
-	@echo "all        : Compute all possible targets. "
+	@echo "all        : Compute all possible targets."
 	@echo "keys       : Compute matchkeys for records in DATADIR (Algorithm: $(RULE))."
 	@echo "statistic  : Compute the frequency distribution for each key type."
 	@echo "cluster    : Compute cluster that group records that are connected by their keys through bfs."
 	@echo "idn-list   : Compute a idn list with all idns that form a cluster per line."
-	@echo "bundle     : A xml dump that groups excerpts of records into a single bundle xml file."
-	@echo "aggregate  : A xml dump that groups excerpts of records into a single marcxml file."
+	@echo "bundle     : A xml dump that contains clustered record (Format: Bundle-XML)"
+	@echo "aggregate  : A xml dump that aggregates clustered record (Format: MARCXML)"
 	@echo
 	@echo "VARS"
 	@echo "DATADIR    : Directory with gzip compressed input data in Marc21 (Default: $(DATADIR))."
@@ -133,21 +133,34 @@ $(TARGETDIR)/keys-statistic.csv.gz:
 
 
 .PHONY: cluster
-cluster: $(TARGETDIR) $(TARGETDIR)/cluster.csv.gz
+cluster: $(TARGETDIR) $(TARGETDIR)/cluster.graphml.gz
 
 .DELETE_ON_ERROR:
-$(TARGETDIR)/cluster.csv.gz: $(TARGETDIR)/keys.csv.gz
+$(TARGETDIR)/cluster.graphml.gz: $(TARGETDIR)/keys.csv.gz
 	java $(JVM_OPTS) $(JVM_OPTS_HEAVY) $(run-groovy)\
 	 scripts/BreadthFirstSearch.groovy --input $< --compress --output $@
 
 	# Exit 1 when target is empty
 	$(call false-if-empty,$@)
 
+.PHONY: cluster-mapping
+cluster-mapping: $(TARGETDIR) $(TARGETDIR)/cluster-mapping.csv.gz
+
+.DELETE_ON_ERROR:
+$(TARGETDIR)/cluster-mapping.csv.gz: $(TARGETDIR)/cluster.graphml.gz
+	gunzip -c $<\
+	| grep "^<node" \
+	| sed -n 's:.*<data.*>\(.*\)</data><data.*>\(.*\)</data>.*:\1 \2:p' \
+	| gzip \
+	> $@
+
+	# Exit 1 when target is empty
+	$(call false-if-empty,$@)
 
 .PHONY: cluster-sorted-by-name
 cluster-sorted-by-name: $(TARGETDIR) $(TARGETDIR)/cluster-sorted-by-name.csv.gz
 
-$(TARGETDIR)/cluster-sorted-by-name.csv.gz: $(TARGETDIR)/cluster.csv.gz
+$(TARGETDIR)/cluster-sorted-by-name.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
 	gunzip -c $<\
 	| LC_ALL=C sort -k1,1 -S3G --compress-program=gzip\
 	| gzip\
@@ -157,7 +170,7 @@ $(TARGETDIR)/cluster-sorted-by-name.csv.gz: $(TARGETDIR)/cluster.csv.gz
 .PHONY: cluster-sorted-by-value
 cluster-sorted-by-value: $(TARGETDIR) $(TARGETDIR)/cluster-sorted-by-value.csv.gz
 
-$(TARGETDIR)/cluster-sorted-by-value.csv.gz: $(TARGETDIR)/cluster.csv.gz
+$(TARGETDIR)/cluster-sorted-by-value.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
 	gunzip -c $<\
 	| LC_ALL=C sort -n -k2,2 -S3G --compress-program=gzip\
 	| gzip\
@@ -185,7 +198,7 @@ $(TARGETDIR)/cluster-idn-list.csv.gz: $(TARGETDIR)/cluster-sorted-by-value.csv.g
 cluster-size: $(TARGETDIR) $(TARGETDIR)/cluster-size.csv.gz
 
 .DELETE_ON_ERROR:
-$(TARGETDIR)/cluster-size.csv.gz: $(TARGETDIR)/cluster.csv.gz
+$(TARGETDIR)/cluster-size.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
 	gunzip -c $<\
 	| cut -d" " -f2\
 	| sort -n -S3G --compress-program=gzip\

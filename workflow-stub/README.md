@@ -29,18 +29,18 @@ make help
 ```
 
 ```bash
+# Build every possible target
+make all RULENAME=wrk DATADIR=/opt/data
+```
+
+```bash
 # Compute keys
 make keys RULENAME=wrk DATADIR=/opt/data
 ```
 
 ```bash
-# Compute keys-statistic
-make keys-statistic RULENAME=wrk DATADIR=/opt/data
-```
-
-```bash
-# Compute cluster (sorted by name)
-make cluster-sorted-by-name RULENAME=wrk DATADIR=/opt/data
+# Compute cluster-mapping
+make cluster-mapping RULENAME=wrk DATADIR=/opt/data
 ```
 
 ```bash
@@ -49,8 +49,8 @@ make cluster-idn-list RULENAME=wrk DATADIR=/opt/data
 ```
 
 ```bash
-# Build XML with bundles excerpts
-make bundle RULENAME=wrk DATADIR=/opt/data
+# Build export XML
+make aggregate RULENAME=wrk DATADIR=/opt/data
 ```
 
 ## Options
@@ -61,15 +61,15 @@ Each target creates a file or runs multiple dependencies.
 | --- | --- |
 | all | Build all possible targets. |
 | keys | Constructs (match-)keys for each record. |
-| cluster | Maps related records into clusters. |
-| bundle | Constructs a XML file that contains grouped MARCXML excerpts according to the computed clustering. |
-| solr | Constructs a XML file that contains index updates for Apache Solr. One file contains documents, the other contains document updates with cluster tags. |
-
+| cluster-mapping | Filters the previously computed clustering. Maps record ids to cluster ids. |
+| bundle | XML file that contains cluster information (a so-called *bundle*). Each cluster element contains all records found in the corresponding cluster. The record information are limited to an excerpt. |
+| aggregate | MARCXML file that contains one record element per cluster. Each record element aggregates the information of all records in a cluster. The record information are limited to an excerpt. |
 
 There are also the following targets available:
 
 | Target | Description |
 | --- | --- |
+| cluster | Build a graph based on the output of *keys*. A breadth first search computes all connected components (so-called *cluster*). Outputs the bfs-graph as GraphML file.
 | cluster-idn-list | Build a file that collects the ids for each cluster. One cluster per line. |
 | cluster-size | Builds a table that contains the cluster number and the corresponding cluster size. |
 | cluster-size-frequency | Builds a table that contains the cluster size and the corresponding frequency. |
@@ -112,6 +112,7 @@ digraph Makefile {
     ]
     
     keys_statistic [ label = "keys-statistic" ]
+    cluster_mapping [ label = "cluster-mapping" ]
     cluster_sorted_by_name [ label = "cluster-\nsorted-by-name" ]
     cluster_sorted_by_value [ label = "cluster-\nsorted-by-value" ]
     cluster_idn_list [ label = "cluster-idn-\nlist" ]
@@ -125,14 +126,16 @@ digraph Makefile {
     keys_statistic -> rulename [ style = dotted ]
 
     cluster -> keys
-    cluster_sorted_by_name -> cluster
-    cluster_sorted_by_value -> cluster
+    cluster_mapping -> cluster
+    cluster_sorted_by_name -> cluster_mapping
+    cluster_sorted_by_value -> cluster_mapping
     cluster_idn_list -> cluster_sorted_by_value
-    cluster_size -> cluster
+    cluster_size -> cluster_mapping
     cluster_size_frequencey -> cluster_size
     
     excerpts -> datadir [ style = dotted ]
     excerpts_mapped -> excerpts, cluster_sorted_by_name
     bundle -> excerpts_mapped
+    aggregate -> excerpts_mapped
 }
 ```
