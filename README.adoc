@@ -1,7 +1,7 @@
 = Culturegraph Workflows
 :TOC:
 
-Data transformation and processing workflows for CultureGraph.
+Data transformation and processing workflows for Culturegraph.
 
 == Install
 
@@ -15,10 +15,10 @@ Data transformation and processing workflows for CultureGraph.
 Run the following command to build a distribution.
 
 ----
-gradlew clean test distZip
+./gradlew clean test distZip
 ----
 
-The final archive `culturegraph-workflows-VERSION.zip` resides in `groovy-distribution\build\distributions`.
+The final archive `culturegraph-workflows-VERSION.zip` resides in `groovy-dist\build\distributions`.
 
 == Quickstart
 
@@ -34,5 +34,7 @@ The docs folder contains a documentation of the implemented workflows.
 Build a PDF with:
 
 ----
-gradlew clean asciidoctor
+./gradlew clean asciidoctor
 ----
+
+The result may be found in `docs/build/asciidoc/pdf`.
