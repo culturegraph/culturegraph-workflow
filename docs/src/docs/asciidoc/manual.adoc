@@ -60,7 +60,7 @@ image::workflow-keys.png[Workflow Schlüsselerzeugung, pdfwidth="70%", align="ce
 
 ==== Bündelbildung (Clustering)
 
-Der Workflow zur Bündelbildung footnote:[Auch _Clustering_ oder _Komponente_ genannt.] nimmt die Ausgabe des Workflows <<Schlüsselerzeugung>> entgegen und führt eine Cluster-Analyse durch.
+Der Workflow zur Bündelbildung footnote:[Die gebildeten Bündel werden auch als _Cluster_ oder _Komponente_ bezeichnet.] nimmt die Ausgabe des Workflows <<Schlüsselerzeugung>> entgegen und führt eine Cluster-Analyse durch.
 Hierbei wird die Schlüsseldatei als Adjazenzliste interpretiert und eine Graph-Modell erzeugt.
 Es wird ein bipartiter Graph erzeugt, der die Beziehung zwischen Id und Schlüssel für jeden Datensatz abbildet.
 
@@ -69,7 +69,7 @@ Durch eine Breitensuche können alle Zusammenhangskomponenten im Graph ermittelt
 Der Ergebnisgraph der Breitensuche wird im Format GraphML abgelegt.
 In diesem sind alle Kanten und Knoten die zu eine Komponenten gehören über ein eindeutiges Label gekennzeichnet.
 
-Das finale Mapping wird durch filtern der GraphML-Datei erzeugt und enthält für jede Id ein Label, welches die zugehörige Komponenten kennzeichnet. 
+Das finale Mapping wird durch das Filtern der GraphML-Datei erzeugt und enthält für jede Id ein Label, welches die zugehörige Komponente kennzeichnet.
 
 .Workflow der Bündelbildung
 image::workflow-cluster.png[Workflow zur Bündelbildung, pdfwidth="90%", align="center"]
@@ -84,12 +84,13 @@ Es wird eine CSV-Datei erzeugt die für jeden Titeldatensatz pro Zeile eine Id u
 Die Id wird über die Metamorph-Datei `id.xml` erzeugt. Die Feldauswahl für den verkürzten Datensatz ist in `excerpt.xml` definiert.
 
 Die Ergebnisse aus dem Schritt <<Bündelbildung (Clustering)>> werden genutzt um die zuvor erzeugte CSV-Datei mit der zugehörigen Cluster-Zuordnung zu versehen.
-Wird die CSV-Datei nach der Zuordnung sortiert (_Sortieren nach Bündelung_), stehen alle verkürzten MARC-Sätze untereinader die zum gleichen Cluster gehören.
+Die CSV-Datei wird nach der Zuordnung sortiert (_Sortieren nach Bündelung_).
+Folglich stehen alle verkürzten MARC-Sätze untereinader die zum gleichen Cluster gehören.
 
 Die so aufbereiteten Daten können nachfolgend in zwei verschiedene Ausgabeformate umgewandelt werden.
-Das Ausgabeformat des Prozesses _Bündel-XML erzeugen_ erzeugte eine XML Datei die für jedes Bündel ein XML Element enthält, welches fortlaufend alle Datensätze als MARCXML enthält.
+Das Ausgabeformat des Prozesses "`_Bündel-XML erzeugen_`" erzeugte eine XML Datei die für jedes Bündel ein XML Element enthält, welches fortlaufend alle Datensätze als MARCXML enthält.
 
-Alternativ kann mit dem Prozess _MARCXML erzeugen_ ein MARCXML-Dokument erzeugt werden, welches alle Informationen eines Bündels in einen MARXML-Record Element aggregiert.
+Alternativ kann mit dem Prozess "`_MARCXML erzeugen_`" ein MARCXML-Dokument erzeugt werden, welches alle Informationen eines Bündels in einen MARXML-Record Element aggregiert.
 Das XML enthält somit genau so viele Records, wie Bündel gefunden wurden. Eine genau Beschreibung des Vorgehens ist auf der link:https://github.com/culturegraph/culturegraph-record-aggregator[Projekseite] zu finden.
 
 [#img-workflow-bundle-export]
@@ -165,15 +166,18 @@ cd docs/build/asciidoc/docbook
 pandoc -s -f docbook -o manual.docx manual.xml
 ----
 
-=== Graph Analyse
 
-Die GraphML Ausgabe eignet auch um einzelne Komponenten zu analysieren.
+=== Ideen
 
-Durch die Statistik der Clustergrößen kann man für jede Cluster/Komponenten Id die jeweilige Größe herausfinden.
+==== Graph Analyse
+
+Die GraphML Ausgabe der Clusterung eignet um einzelne Komponenten zu analysieren.
 
 ----
-# Jede Kante und jeder Knoten besitzen ein Attribute das die Nummer der Komponente (hier d1) enthält.
-# Der Anfang der XML Dokumentes entält die Metadaten für die jeweiligen Kanten- und Knoten-Attribute.
+# Jede Kante und jeder Knoten besitzen ein Attribute
+# das die Nummer der zugehörigen Komponente (hier d1) enthält.
+# Der Anfang der XML Dokumentes entält die Metadaten
+# für die jeweiligen Kanten- und Knoten-Attribute.
 zcat cluster.graphml.gz | head -5 > cluster17.graphml
 zcat cluster.graphml.gz | grep "d1\">17<" >> cluster17.graphml
 echo "</graph>" >> cluster17.graphml
