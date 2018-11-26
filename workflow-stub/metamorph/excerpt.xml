@@ -23,29 +23,29 @@
         <data source="008"/>
 
         <!-- 016 - National Bibliographic Agency Control Number (R) -->
-        <entity name="016  " reset="true">
+        <entity name="016  " reset="true" sameEntity="false">
             <data name="a" source="016  .a"/>
         </entity>
 
         <!-- 020 - International Standard Book Number (R) -->
-        <entity name="020  " reset="true">
+        <entity name="020  " reset="true" sameEntity="false">
             <data name="a" source="020  .a"/>
         </entity>
 
         <!-- 022 - International Standard Serial Number (R) -->
-        <entity name="022  " reset="true">
+        <entity name="022  " reset="true" sameEntity="false">
             <data name="a" source="022  .a"/>
         </entity>
 
         <!-- 024 - Other Standard Identifier (R)
              First Indicator 2 - International Standard Music Number -->
-        <entity name="0242 " reset="true">
+        <entity name="0242 " reset="true" sameEntity="false">
             <data name="a" source="0242 .a"/>
         </entity>
 
         <!-- 024 - Other Standard Identifier (R)
              First Indicator 3 - International Article Number -->
-        <entity name="0243 " reset="true">
+        <entity name="0243 " reset="true" sameEntity="false">
             <data name="a" source="0243 .a"/>
         </entity>
 
@@ -67,7 +67,7 @@
         </entity>
 
         <!-- 035 - System Control Number (R) -->
-        <entity name="035  " reset="true">
+        <entity name="035  " reset="true" sameEntity="false">
             <data name="a" source="035  .a"/>
         </entity>
 
@@ -104,7 +104,7 @@
         </entity>
 
         <!-- 044 - Country of Publishing/Producing Entity Code (NR) -->
-        <entity name="044  " reset="true">
+        <entity name="044  " reset="true" sameEntity="false">
             <data name="a" source="044  .a"/>
         </entity>
 
@@ -179,7 +179,7 @@
         </entity>
 
         <!-- 300 - Physical Description (R) -->
-        <entity name="300  " reset="true">
+        <entity name="300  " reset="true" sameEntity="false">
             <data name="a" source="300  .a"/>
         </entity>
 
