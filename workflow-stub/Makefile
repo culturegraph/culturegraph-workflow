@@ -225,7 +225,7 @@ bundle: $(TARGETDIR) $(TARGETDIR)/bundle.xml.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/bundle.xml.gz: $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
-	java $(run-groovy) scripts/WorkflowExcerptsBundle.groovy \
+	java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerptsBundle.groovy \
 	  --input $< \
 	  --algorithm $(RULE) \
 	  --morph metamorph/bundle.xml \
@@ -241,8 +241,8 @@ $(TARGETDIR)/bundle.xml.gz: $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
 aggregate: $(TARGETDIR) $(TARGETDIR)/aggregate.marc.xml.gz
 
 .DELETE_ON_ERROR:
-$(TARGETDIR)/aggregate.marc.xml.gz: $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
-	java $(run-groovy) scripts/WorkflowExcerptsAggregate.groovy \
+$(TARGETDIR)/aggregate.marcxml.gz: $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
+	java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerptsAggregate.groovy \
 	  --input $< \
 	  --output - \
 	| java $(run-groovy) scripts/PrettyPrintXml.groovy \
@@ -263,7 +263,7 @@ $(TARGETDIR)/excerpts.mrc.csv.gz:
 	find $(DATADIR) -type f \
 	| grep "\.gz$$" \
 	| xargs gunzip -c \
-	| java $(run-groovy) scripts/WorkflowExcerpts.groovy \
+	| java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerpts.groovy \
 	 --input - \
 	 --id-morph metamorph/gviId.xml \
 	 --excerpt-morph metamorph/excerpt.xml \
