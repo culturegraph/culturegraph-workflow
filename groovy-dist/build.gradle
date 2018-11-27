@@ -65,7 +65,7 @@ task distZip(type: Zip, overwrite: true, dependsOn: ['distGroovy']) {
 
     description = 'Assembles a zip archive for project distribution.'
 
-    baseName = 'culturegraph' + '-' + parent.name
+    baseName = parent.name + '-' + 'dist'
     from project.parent.fileTree('workflow-stub')
     from fileTree('resources')
 
