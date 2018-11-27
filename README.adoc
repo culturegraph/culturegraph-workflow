@@ -18,7 +18,7 @@ Run the following command to build a distribution.
 ./gradlew clean test distZip
 ----
 
-The final archive `culturegraph-workflows-VERSION.zip` resides in `groovy-dist\build\distributions`.
+The final archive `culturegraph-workflow-dist-VERSION.zip` resides in `groovy-dist\build\distributions`.
 
 == Quickstart
 
