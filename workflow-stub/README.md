@@ -88,6 +88,25 @@ Parameter table:
 | JVM_HEAVY_TASK | JVM options for tasks that need a lot of resources <br> (Default: `-Xmx12g -XX:+UseCompressedOops -XX:+UseG1GC`).
 | RULENAME | Rule set for key generation <br> (Choose: [`wrk`], Default: `wrk`). |
 | TARGETDIR |  Directory that contains build results <br> (Default: `./target`). |
+| THREADS | Parallel execution parameter for some data processing steps <br> (Default: `1`). |
+
+### Logging
+
+Some workflow steps use Java programs to execute their task.
+
+You may extend or change the Makefile Parameter `JVM_OPTS` to set the log location and the log level.
+
+The sections looks like this (by default):
+
+```
+# JVM_OPTS
+# JVM setting for default java tasks
+#
+JVM_OPTS = -Xmx2g -Dfile.encoding=UTF-8 -Dorg.slf4j.simpleLogger.defaultLogLevel=off -Dorg.slf4j.simpleLogger.logFile=System.err 
+```  
+
+All Java programs use the slf4j Simplelogger ([Documentation](https://www.slf4j.org/api/org/slf4j/impl/SimpleLogger.html)). 
+
 
 ## Appendix
 
