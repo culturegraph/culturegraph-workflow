@@ -94,7 +94,7 @@ keys: $(TARGETDIR) $(TARGETDIR)/keys.csv.gz
 .DELETE_ON_ERROR:
 $(TARGETDIR)/keys.csv.gz:
 	find $(DATADIR) -type f \
-	| grep "gz" \
+	| grep "\.gz$$" \
 	| xargs gunzip -c \
 	| java $(JVM_OPTS) $(run-groovy) scripts/WorkflowKeys.groovy \
 	 --input - \
@@ -111,13 +111,12 @@ $(TARGETDIR)/keys.csv.gz:
 .PHONY: statistic
 statisitc: keys-statistic
 
-
 .PHONY: keys-statistic
 keys-statistic: $(TARGETDIR) $(TARGETDIR)/keys-statistic.csv.gz
 
 $(TARGETDIR)/keys-statistic.csv.gz:
 	find $(DATADIR) -type f \
-	| grep "gz" \
+	| grep "\.gz$$" \
 	| xargs gunzip -c \
 	| java $(run-groovy) scripts/WorkflowKeysStatistic.groovy \
 	 --input - \
@@ -262,7 +261,7 @@ excerpts: $(TARGETDIR) $(TARGETDIR)/excerpts.mrc.csv.gz
 .DELETE_ON_ERROR:
 $(TARGETDIR)/excerpts.mrc.csv.gz:
 	find $(DATADIR) -type f \
-	| grep "gz" \
+	| grep "\.gz$$" \
 	| xargs gunzip -c \
 	| java $(run-groovy) scripts/WorkflowExcerpts.groovy \
 	 --input - \
@@ -282,7 +281,7 @@ excerpts-mapped: $(TARGETDIR) $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/excerpts-mapped.mrc.csv.gz: $(TARGETDIR)/excerpts.mrc.csv.gz $(TARGETDIR)/cluster-sorted-by-name.csv.gz
-	java $(run-groovy) scripts/WorkflowExcerptsMapping.groovy \
+	java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerptsMapping.groovy \
 	 --input $< \
 	 --map $(word 2,$^) \
 	| LC_ALL=C sort --numeric-sort -S3G -k1,1 --compress-program=gzip\
