@@ -241,7 +241,7 @@ $(TARGETDIR)/bundle.xml.gz: $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
 
 
 .PHONY: aggregate
-aggregate: $(TARGETDIR) $(TARGETDIR)/aggregate.marc.xml.gz
+aggregate: $(TARGETDIR) $(TARGETDIR)/aggregate.marcxml.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/aggregate.marcxml.gz: $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
