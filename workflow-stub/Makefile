@@ -230,6 +230,9 @@ $(TARGETDIR)/bundle.xml.gz: $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
 	  --algorithm $(RULE) \
 	  --morph metamorph/bundle.xml \
 	  --xsl xslt/bundle.xsl \
+	| java $(run-groovy) scripts/PrettyPrintXml.groovy \
+	  --input - \
+	  --output - \
 	| gzip\
 	> $@
 
