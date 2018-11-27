@@ -44,7 +44,7 @@ image::overview.png[Gesamtüberblick, align="center"]
 
 Jeder Workflow besteht aus drei Schritten die im oben genannten Diagramm gezeigt sind.
 Die Import-Phase besteht im einfachten Fall aus dem Lesen von Daten aus einer Ablage (Datenhaltung) die nachfolgend verarbeitet werden. 
-Es könnten zusätzliche Vorverarbeitungsschritte hinzukommen.
+Es können zusätzliche Vorverarbeitungsschritte hinzukommen.
 
 In der Analyse-Phase werden Algorithmen, Transformationen oder andere Verfahren ausgeführt die die importierten Daten nutzen um neues Wissen zu erzeugen.
 Die Export-Phase speichert die Ergebnisse in einem Datenformat.
