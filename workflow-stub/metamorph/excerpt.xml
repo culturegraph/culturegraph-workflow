@@ -19,93 +19,10 @@
         <data source="001"/>
         <!-- 003 - Control Number Identifier (NR) -->
         <data source="003"/>
-        <!-- 008 - Fixed-Length Data Elements-General Information (NR) -->
-        <data source="008"/>
-
-        <!-- 016 - National Bibliographic Agency Control Number (R) -->
-        <entity name="016  " reset="true" sameEntity="false">
-            <data name="a" source="016  .a"/>
-        </entity>
-
-        <!-- 020 - International Standard Book Number (R) -->
-        <entity name="020  " reset="true" sameEntity="false">
-            <data name="a" source="020  .a"/>
-        </entity>
-
-        <!-- 022 - International Standard Serial Number (R) -->
-        <entity name="022  " reset="true" sameEntity="false">
-            <data name="a" source="022  .a"/>
-        </entity>
-
-        <!-- 024 - Other Standard Identifier (R)
-             First Indicator 2 - International Standard Music Number -->
-        <entity name="0242 " reset="true" sameEntity="false">
-            <data name="a" source="0242 .a"/>
-        </entity>
-
-        <!-- 024 - Other Standard Identifier (R)
-             First Indicator 3 - International Article Number -->
-        <entity name="0243 " reset="true" sameEntity="false">
-            <data name="a" source="0243 .a"/>
-        </entity>
-
-        <!-- 024 - Cataloging Source
-            First Indicator 7 - Source specified in subfield $2 -->
-        <entity name="0247?" reset="true" sameEntity="false">
-            <entity-name>
-                <data source="0247?">
-                    <switch-name-value/>
-                </data>
-            </entity-name>
-            <group>
-                <data source="0247?.2|0247?.a">
-                    <switch-name-value/>
-                    <substring start="6" end="7"/>
-                    <switch-name-value/>
-                </data>
-            </group>
-        </entity>
 
         <!-- 035 - System Control Number (R) -->
         <entity name="035  " reset="true" sameEntity="false">
             <data name="a" source="035  .a"/>
-        </entity>
-
-        <!-- 040 - Cataloging Source -->
-        <entity name="040??" reset="true" sameEntity="false">
-            <entity-name>
-                <data source="040??">
-                    <switch-name-value/>
-                </data>
-            </entity-name>
-            <group>
-                <data source="040??.?">
-                    <switch-name-value/>
-                    <substring start="6" end="7"/>
-                    <switch-name-value/>
-                </data>
-            </group>
-        </entity>
-
-        <!-- 41 - Language Code -->
-        <entity name="041??" reset="true" sameEntity="false">
-            <entity-name>
-                <data source="041??">
-                    <switch-name-value/>
-                </data>
-            </entity-name>
-            <group>
-                <data source="041??.?">
-                    <switch-name-value/>
-                    <substring start="6" end="7"/>
-                    <switch-name-value/>
-                </data>
-            </group>
-        </entity>
-
-        <!-- 044 - Country of Publishing/Producing Entity Code (NR) -->
-        <entity name="044  " reset="true" sameEntity="false">
-            <data name="a" source="044  .a"/>
         </entity>
 
         <!-- 82 - Dewey Decimal Classification Number,
@@ -128,59 +45,21 @@
 
         <!-- 100 - Main Entry-Personal Name (NR),
              110 - Main Entry-Corporate Name (NR),
-             111 - Main Entry-Meeting Name (NR) -->
-        <entity name="100??|110??|111??" reset="true" sameEntity="false">
+             111 - Main Entry-Meeting Name (NR) 
+             130 - Main Entry-Uniform Title (NR) -->
+        <entity name="100??|110??|111??|130??" reset="true" sameEntity="false">
             <entity-name>
-                <data source="100??|110??|111??">
+                <data source="100??|110??|111??|130??">
                     <switch-name-value/>
                 </data>
             </entity-name>
             <group>
-                <data source="100??.?|110??.?|111??.?">
+                <data source="100??.?|110??.?|111??.?|130??.?">
                     <switch-name-value/>
                     <substring start="6" end="7"/>
                     <switch-name-value/>
                 </data>
             </group>
-        </entity>
-
-        <!-- 245 - Title Statement (NR),
-             246 - Varying Form of Title (R) -->
-        <entity name="245??|246??" reset="true" sameEntity="false">
-            <entity-name>
-                <data source="245??|246??">
-                    <switch-name-value/>
-                </data>
-            </entity-name>
-            <group>
-                <data source="245??.?|246??.?">
-                    <switch-name-value/>
-                    <substring start="6" end="7"/>
-                    <switch-name-value/>
-                </data>
-            </group>
-        </entity>
-
-        <!-- 260 - Publication, Distribution, etc. (Imprint) (R),
-             264 - Production, Publication, Distribution, Manufacture, and Copyright Notice (R) -->
-        <entity name="260??|264??" reset="true" sameEntity="false">
-            <entity-name>
-                <data source="260??|264??">
-                    <switch-name-value/>
-                </data>
-            </entity-name>
-            <group>
-                <data source="260??.?|264??.?">
-                    <switch-name-value/>
-                    <substring start="6" end="7"/>
-                    <switch-name-value/>
-                </data>
-            </group>
-        </entity>
-
-        <!-- 300 - Physical Description (R) -->
-        <entity name="300  " reset="true" sameEntity="false">
-            <data name="a" source="300  .a"/>
         </entity>
 
         <!--  6XX - Subject Access Fields-General Information -->
@@ -201,28 +80,21 @@
 
         <!-- 700 - Added Entry-Personal Name,
              710 - Added Entry-Corporate Name,
-             711 - Added Entry-Meeting Name -->
-        <entity name="700??|710??|711??" reset="true" sameEntity="false">
+             711 - Added Entry-Meeting Name 
+             730 - Added Entry-Uniform Title (R) -->
+        <entity name="700??|710??|711??|730??" reset="true" sameEntity="false">
             <entity-name>
-                <data source="700??|710??|711??">
+                <data source="700??|710??|711??|730??">
                     <switch-name-value/>
                 </data>
             </entity-name>
             <group>
-                <data source="700??.?|710??.?|711??.?">
+                <data source="700??.?|710??.?|711??.?|730??.?">
                     <switch-name-value/>
                     <substring start="6" end="7"/>
                     <switch-name-value/>
                 </data>
             </group>
-        </entity>
-
-        <!-- 856 - Electronic Location and Access (R) 
-             First Indicator - 4 - HTTP
-             Second Indicator - 2 - Related resource -->
-        <entity name="85642" reset="true" sameEntity="false">
-            <data name="3" source="85642.3"/>
-            <data name="u" source="85642.u"/>
         </entity>
 
         <!-- 883 - Machine-generated Metadata Provenance -->
