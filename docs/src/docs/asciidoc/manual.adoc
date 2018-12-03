@@ -184,21 +184,3 @@ Mit der Docbook Ausgabe kann via link:https://pandoc.org/[pandoc] ein Docx Dokum
 cd docs/build/asciidoc/docbook
 pandoc -s -f docbook -o manual.docx manual.xml
 ----
-
-
-=== Ideen
-
-==== Graph Analyse
-
-Die GraphML Ausgabe der Clusterung eignet um einzelne Komponenten zu analysieren.
-
-----
-# Jede Kante und jeder Knoten besitzen ein Attribute
-# das die Nummer der zugehörigen Komponente (hier d1) enthält.
-# Der Anfang der XML Dokumentes entält die Metadaten
-# für die jeweiligen Kanten- und Knoten-Attribute.
-zcat cluster.graphml.gz | head -5 > cluster17.graphml
-zcat cluster.graphml.gz | grep "d1\">17<" >> cluster17.graphml
-echo "</graph>" >> cluster17.graphml
-echo "</graphml>" >> cluster17.graphml
-----
