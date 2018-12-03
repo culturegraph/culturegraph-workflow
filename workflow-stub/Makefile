@@ -19,6 +19,11 @@ TARGETDIR = ./target
 #
 THREADS = 1
 
+# EXPORTLIMIT
+# Limit the component size for make target 'aggregate'
+# Default: -1 (unlimited)
+EXPORTLIMIT = -1
+
 # RULE
 # Name of the rule set that is used for key construction.
 # Choose: [wrk]
@@ -308,6 +313,7 @@ $(TARGETDIR)/aggregate.marcxml.gz: $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
 
 	java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerptsAggregate.groovy \
 	  --input $< \
+	  --limit $(EXPORTLIMIT) \
 	  --output - \
 	| java $(run-groovy) scripts/PrettyPrintXml.groovy \
 	  --input - \
