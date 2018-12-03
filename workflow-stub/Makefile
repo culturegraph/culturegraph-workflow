@@ -20,7 +20,8 @@ TARGETDIR = ./target
 THREADS = 1
 
 # EXPORTLIMIT
-# Limit the component size for make target 'aggregate'
+# Limit the records per aggregated for make target 'aggregate'.
+# A component that exceeds this limit, will be skipped during the aggregation step.
 # Default: -1 (unlimited)
 EXPORTLIMIT = -1
 
