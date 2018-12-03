@@ -26,12 +26,13 @@
 package org.culturegraph.script
 
 import de.odysseus.staxon.xml.util.PrettyXMLEventWriter
+import groovy.cli.picocli.CliBuilder
+import org.culturegraph.workflow.plugin.io.DecompressedInputStream
+
 import javax.xml.stream.XMLEventReader
 import javax.xml.stream.XMLEventWriter
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.XMLOutputFactory
-
-import groovy.cli.picocli.CliBuilder
 
 def summary = '\n' +
         'Formats XML by adding indentation.\n'
@@ -59,17 +60,26 @@ if (options.h) {
 def useStdin = (options.i as String) == '-'
 def useStdout = (options.o as String) == '-'
 
-InputStream inputStream = useStdin ? System.in : new FileInputStream(options.i as String)
-OutputStream outputStream = useStdout ? System.out : new FileOutputStream(options.o as String)
-
 int KB64 = 65536
 String utf8 = "UTF-8"
 
-XMLInputFactory inputFactory = XMLInputFactory.newInstance()
-XMLEventReader reader = inputFactory.createXMLEventReader(new BufferedInputStream(inputStream, KB64))
-XMLOutputFactory outputFactory = XMLOutputFactory.newInstance()
-XMLEventWriter writer = new PrettyXMLEventWriter(outputFactory.createXMLEventWriter(new BufferedOutputStream(outputStream, KB64), utf8))
-writer.add(reader)
-writer.flush()
-writer.close()
-reader.close()
+OutputStream outputStream = useStdout ? System.out : new FileOutputStream(options.o as String)
+outputStream.withCloseable { out ->
+    XMLOutputFactory outputFactory = XMLOutputFactory.newInstance()
+
+    XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new BufferedOutputStream(outputStream, KB64), utf8)
+    PrettyXMLEventWriter prettyWriter = new PrettyXMLEventWriter(eventWriter)
+
+    InputStream inputStream = useStdin ? System.in : DecompressedInputStream.of(new FileInputStream(options.i as String))
+    inputStream.withReader {
+        new BufferedReader(it).withCloseable { reader ->
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance()
+            XMLEventReader eventReader = inputFactory.createXMLEventReader(new BufferedInputStream(inputStream, KB64))
+
+            prettyWriter.add(eventReader)
+            prettyWriter.flush()
+            prettyWriter.close()
+            eventReader.close()
+        }
+    }
+}
