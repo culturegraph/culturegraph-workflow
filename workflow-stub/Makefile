@@ -68,6 +68,7 @@ script=./scripts/$(1)
 false-if-empty=if [ -f $(1) ] && [ $$(gunzip -c $(1) | head -c1 | wc -c) -eq 0 ] && echo "File $(1) is empty."; then false; fi;
 
 help:
+	@echo "[Build Steps]"
 	@echo "all         : Compute all possible targets."
 	@echo "keys        : Compute matchkeys for records in DATADIR (Algorithm: $(RULE))."
 	@echo "statistic   : Compute the frequency distribution for each key type."
@@ -76,6 +77,7 @@ help:
 	@echo "bundle      : A xml dump that contains clustered record (Format: Bundle-XML)"
 	@echo "aggregate   : A xml dump that aggregates clustered record (Format: MARCXML)"
 	@echo
+	@echo "[Build Variables]"
 	@echo "DATADIR     : Directory with gzip compressed input data in Marc21 (Default: $(DATADIR))."
 	@echo "RULENAME    : Behaviour for key generation. Choose: [wrk] (Default: $(RULE))."
 	@echo "TARGETDIR   : Directory that contains build results (Default: $(TARGETDIR))."
