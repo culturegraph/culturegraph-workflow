@@ -129,8 +129,11 @@ outputStream.withCloseable { out ->
                 }
             }
         }
-        if (size > 0) Record aggregatedRecords = builder.build()
-        marcXmlWriter.write(aggregatedRecords)
+
+        if (!builder.records.isEmpty()) {
+            Record aggregatedRecords = builder.build()
+            marcXmlWriter.write(aggregatedRecords)
+        }
     }}  // reader end
 
     marcXmlWriter.close()
