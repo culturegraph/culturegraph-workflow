@@ -27,17 +27,7 @@ package org.culturegraph.script
 
 import groovy.cli.picocli.CliBuilder
 import org.culturegraph.recordaggregator.plugin.AggregatedRecordBuilderImpl
-import org.culturegraph.workflow.core.BundleBuilder
-import org.culturegraph.workflow.core.entities.ChainedTransformer
-import org.culturegraph.workflow.core.entities.InputFormat
-import org.culturegraph.workflow.core.entities.OutputFormat
-import org.culturegraph.workflow.core.entities.Transformer
-import org.culturegraph.workflow.core.entities.TransformerFactory
 import org.culturegraph.workflow.plugin.io.DecompressedInputStream
-import org.culturegraph.workflow.plugin.io.MarcStreamFactory
-import org.culturegraph.workflow.plugin.metafacture.ExcerptTransformerFactory
-import org.culturegraph.workflow.plugin.metafacture.MetamorphTransformerFactory
-import org.culturegraph.workflow.plugin.metafacture.XslTransformerFactory
 import org.marc4j.MarcReader
 import org.marc4j.MarcStreamReader
 import org.marc4j.MarcXmlWriter
@@ -45,28 +35,25 @@ import org.marc4j.marc.Record
 
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
-import java.text.SimpleDateFormat
+import java.time.Clock
 import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.SynchronousQueue
-import java.util.concurrent.TimeUnit
-import java.util.regex.Pattern
-import java.util.stream.Stream
 
 def summary = '\n' +
         'Workflow that generates a MARCXML collection that aggregates grouped excerpts from MARC21 records.' +
         '\n'
 
 def usage = this.class.getSimpleName() + ' ' +
-        '[-h] --input FILE [--separator delimiter] [--output FILE] --morph FILE [--morph FILE ...] --xsl FILE [--xsl FILE ...]'
+        '[-h] --input FILE [--separator delimiter] [--output FILE] --limit NUM FILE'
 
 def cli = new CliBuilder(usage: usage, header: '\nOptions:', footer: summary)
 cli.with {
     i argName: 'file', longOpt: 'input', 'Input file with mapped excerpts.', type: String.class, required: true
     o argName: 'file', longOpt: 'output', 'Output file. Use - for stdout. Default: stdout.', type: String.class, required: false, defaultValue: '-'
     s argName: 'delimiter', longOpt: 'separator', 'Separator used for input csv to split key and record. Default: SPACE.', type: String.class, defaultValue: ' '
+    l argName: 'limit', longOpt: 'limit', 'Komponent limit. A component that exceeds this limit will not be exported. Default: unlimited.', type: Integer.class, defaultValue: '-1'
     h longOpt: 'help', 'Show usage information.'
 }
 
@@ -82,32 +69,40 @@ if (options.h) {
 }
 
 boolean useStdout = (options.o as String) == '-'
-def input = options.i as File
+File input = options.i as File
 String separator = options.s as String
+Integer limit = options.l as Integer
 
 AggregatedRecordBuilderImpl builder = new AggregatedRecordBuilderImpl()
 builder.setCatalogingAgency('DE-101')
 builder.setBuildNumberPrefix('CG_')
 
-LocalDateTime now = LocalDateTime.now();
-DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
-builder.setBuildNumberSuffix('_' + now.format(formatter))
+ZonedDateTime utcNow = LocalDateTime.now(Clock.systemUTC()).atZone(ZoneOffset.UTC)
+DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT
+builder.setBuildNumberSuffix('_' + formatter.format(utcNow))
 
 Charset utf8 = StandardCharsets.UTF_8
 
 OutputStream outputStream = useStdout ? System.out : new FileOutputStream(options.o as String)
 outputStream.withCloseable { out ->
-    MarcXmlWriter marcXmlWriter = new MarcXmlWriter(out, utf8.name(), true)
+    MarcXmlWriter marcXmlWriter = new MarcXmlWriter(out, true)
     InputStream inputStream = DecompressedInputStream.of(new FileInputStream(input))
     inputStream.withReader { new BufferedReader(it).withCloseable { reader ->
 
         String lastLabel = ''
         Iterator<String> mappedExcerptsIterator = reader.lines().iterator()
+
+        int size = 0
+        String skipLabel = ''
         while (mappedExcerptsIterator.hasNext()) {
             String line = mappedExcerptsIterator.next()
             String[] row = line.split(separator, 2)
             String label = row[0]
             String record = row[1]
+
+            if (label == skipLabel) {
+                continue
+            }
 
             byte[] bytes = record.getBytes(utf8)
             MarcReader marcReader = new MarcStreamReader(new ByteArrayInputStream(bytes))
@@ -117,12 +112,24 @@ outputStream.withCloseable { out ->
                 builder.add(rec)
             } else {
                 Record aggregatedRecords = builder.build()
+                size = 0
                 builder.add(rec)
                 marcXmlWriter.write(aggregatedRecords)
             }
+
             lastLabel = label
+
+            if (limit > 0) {
+                size += 1
+                if (size > limit) {
+                    builder.records.clear()
+                    size = 0
+                    skipLabel = label
+                    lastLabel = ''
+                }
+            }
         }
-        Record aggregatedRecords = builder.build()
+        if (size > 0) Record aggregatedRecords = builder.build()
         marcXmlWriter.write(aggregatedRecords)
     }}  // reader end
 
