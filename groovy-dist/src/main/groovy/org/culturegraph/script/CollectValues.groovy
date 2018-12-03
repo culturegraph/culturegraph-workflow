@@ -23,10 +23,10 @@
  *
  * Groovy: Version 2.5.0
  */
- 
+package org.culturegraph.script
+
 import groovy.cli.picocli.CliBuilder
 import org.culturegraph.workflow.core.KeyValueCollector
-import org.culturegraph.workflow.plugin.io.DecompressedInputStream
 
 def summary = '\n' +
         'Workflow that processes a key-value list. ' +

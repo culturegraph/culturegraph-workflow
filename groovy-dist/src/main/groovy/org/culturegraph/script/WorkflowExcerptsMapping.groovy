@@ -27,7 +27,6 @@ package org.culturegraph.script
 
 import groovy.cli.picocli.CliBuilder
 import org.culturegraph.workflow.core.IterativeCsvHeadMapper
-import org.culturegraph.workflow.core.IterativeXmlCommentMapper
 import org.culturegraph.workflow.plugin.io.DecompressedInputStream
 
 def summary = '\n' +

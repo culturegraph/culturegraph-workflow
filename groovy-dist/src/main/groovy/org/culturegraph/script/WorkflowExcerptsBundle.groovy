@@ -30,21 +30,9 @@ import org.culturegraph.workflow.core.BundleBuilder
 import org.culturegraph.workflow.core.entities.ChainedTransformer
 import org.culturegraph.workflow.core.entities.InputFormat
 import org.culturegraph.workflow.core.entities.OutputFormat
-import org.culturegraph.workflow.core.entities.Transformer
-import org.culturegraph.workflow.core.entities.TransformerFactory
 import org.culturegraph.workflow.plugin.io.DecompressedInputStream
-import org.culturegraph.workflow.plugin.io.MarcStreamFactory
-import org.culturegraph.workflow.plugin.metafacture.ExcerptTransformerFactory
 import org.culturegraph.workflow.plugin.metafacture.MetamorphTransformerFactory
 import org.culturegraph.workflow.plugin.metafacture.XslTransformerFactory
-
-import java.nio.charset.StandardCharsets
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.SynchronousQueue
-import java.util.concurrent.TimeUnit
-import java.util.regex.Pattern
-import java.util.stream.Stream
 
 def summary = '\n' +
         'Workflow that generates a Bundle of MARCXML excerpts from MARC21 records.' +

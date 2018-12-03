@@ -25,6 +25,7 @@
  */
 package org.culturegraph.script
 
+import groovy.cli.picocli.CliBuilder
 import org.culturegraph.workflow.core.DistributionCollector
 import org.culturegraph.workflow.core.entities.ChainedTransformer
 import org.culturegraph.workflow.core.entities.InputFormat
@@ -40,9 +41,6 @@ import java.util.concurrent.SynchronousQueue
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import java.util.stream.Stream
-
-import groovy.cli.picocli.CliBuilder
-
 
 def summary = '\n' +
         'Workflow that accumulates the distribution of keys for each record.'

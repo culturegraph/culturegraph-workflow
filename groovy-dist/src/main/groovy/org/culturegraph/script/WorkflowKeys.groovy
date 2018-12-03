@@ -25,6 +25,7 @@
  */
 package org.culturegraph.script
 
+import groovy.cli.picocli.CliBuilder
 import org.culturegraph.workflow.core.entities.InputFormat
 import org.culturegraph.workflow.core.entities.OutputFormat
 import org.culturegraph.workflow.core.entities.Transformer
@@ -37,11 +38,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.SynchronousQueue
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
-
-import groovy.cli.picocli.CliBuilder
-
 import java.util.stream.Stream
-
 
 def summary = '\n' +
         'Workflow that transform MARC21 or MARCXML (plain or gz) into csv rows. ' +
