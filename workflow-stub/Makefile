@@ -78,6 +78,11 @@ help:
 
 
 $(TARGETDIR):
+	@echo
+	@echo
+	@echo "[Creating target folder $(TARGETDIR)]"
+	@echo
+
 	mkdir -p $(TARGETDIR)
 
 .PHONY: clean
@@ -93,6 +98,11 @@ keys: $(TARGETDIR) $(TARGETDIR)/keys.csv.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/keys.csv.gz:
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	find $(DATADIR) -type f \
 	| grep "\.gz$$" \
 	| xargs gunzip -c \
@@ -115,6 +125,11 @@ statisitc: keys-statistic
 keys-statistic: $(TARGETDIR) $(TARGETDIR)/keys-statistic.csv.gz
 
 $(TARGETDIR)/keys-statistic.csv.gz:
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	find $(DATADIR) -type f \
 	| grep "\.gz$$" \
 	| xargs gunzip -c \
@@ -136,8 +151,14 @@ cluster: $(TARGETDIR) $(TARGETDIR)/cluster.graphml.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/cluster.graphml.gz: $(TARGETDIR)/keys.csv.gz
-	java $(JVM_OPTS) $(JVM_OPTS_HEAVY) $(run-groovy)\
-	 scripts/BreadthFirstSearch.groovy --input $< --compress --output $@
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
+	java $(JVM_OPTS) $(JVM_OPTS_HEAVY) $(run-groovy) scripts/BreadthFirstSearch.groovy \
+	--input $< \
+	--compress --output $@
 
 	# Exit 1 when target is empty
 	$(call false-if-empty,$@)
@@ -147,6 +168,11 @@ cluster-mapping: $(TARGETDIR) $(TARGETDIR)/cluster-mapping.csv.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/cluster-mapping.csv.gz: $(TARGETDIR)/cluster.graphml.gz
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	gunzip -c $<\
 	| grep "^<node" \
 	| sed -n 's:.*<data.*>\(.*\)</data><data.*>\(.*\)</data>.*:\1 \2:p' \
@@ -160,6 +186,11 @@ $(TARGETDIR)/cluster-mapping.csv.gz: $(TARGETDIR)/cluster.graphml.gz
 cluster-sorted-by-name: $(TARGETDIR) $(TARGETDIR)/cluster-sorted-by-name.csv.gz
 
 $(TARGETDIR)/cluster-sorted-by-name.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	gunzip -c $<\
 	| LC_ALL=C sort -k1,1 -S3G --compress-program=gzip\
 	| gzip\
@@ -170,6 +201,11 @@ $(TARGETDIR)/cluster-sorted-by-name.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
 cluster-sorted-by-value: $(TARGETDIR) $(TARGETDIR)/cluster-sorted-by-value.csv.gz
 
 $(TARGETDIR)/cluster-sorted-by-value.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	gunzip -c $<\
 	| LC_ALL=C sort -n -k2,2 -S3G --compress-program=gzip\
 	| gzip\
@@ -184,6 +220,11 @@ idn-list: cluster-idn-list
 cluster-idn-list: $(TARGETDIR) $(TARGETDIR)/cluster-idn-list.csv.gz
 
 $(TARGETDIR)/cluster-idn-list.csv.gz: $(TARGETDIR)/cluster-sorted-by-value.csv.gz
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	gunzip -c $< \
 	| awk '{ print $$2 " " $$1 }' \
 	| java $(run-groovy) scripts/CollectValues.groovy \
@@ -198,6 +239,11 @@ cluster-size: $(TARGETDIR) $(TARGETDIR)/cluster-size.csv.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/cluster-size.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	gunzip -c $<\
 	| cut -d" " -f2\
 	| sort -n -S3G --compress-program=gzip\
@@ -211,6 +257,11 @@ $(TARGETDIR)/cluster-size.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
 cluster-size-frequency: $(TARGETDIR) $(TARGETDIR)/cluster-size-frequency.csv.gz
 
 $(TARGETDIR)/cluster-size-frequency.csv.gz: $(TARGETDIR)/cluster-size.csv.gz
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	gunzip -c $<\
 	| cut -d" " -f4\
 	| sort -n -S3G --compress-program=gzip\
@@ -225,6 +276,11 @@ bundle: $(TARGETDIR) $(TARGETDIR)/bundle.xml.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/bundle.xml.gz: $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerptsBundle.groovy \
 	  --input $< \
 	  --algorithm $(RULE) \
@@ -245,6 +301,11 @@ aggregate: $(TARGETDIR) $(TARGETDIR)/aggregate.marcxml.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/aggregate.marcxml.gz: $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerptsAggregate.groovy \
 	  --input $< \
 	  --output - \
@@ -263,6 +324,11 @@ excerpts: $(TARGETDIR) $(TARGETDIR)/excerpts.mrc.csv.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/excerpts.mrc.csv.gz:
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	find $(DATADIR) -type f \
 	| grep "\.gz$$" \
 	| xargs gunzip -c \
@@ -284,6 +350,11 @@ excerpts-mapped: $(TARGETDIR) $(TARGETDIR)/excerpts-mapped.mrc.csv.gz
 
 .DELETE_ON_ERROR:
 $(TARGETDIR)/excerpts-mapped.mrc.csv.gz: $(TARGETDIR)/excerpts.mrc.csv.gz $(TARGETDIR)/cluster-sorted-by-name.csv.gz
+	@echo
+	@echo
+	@echo "[Build of $@]"
+	@echo
+
 	java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerptsMapping.groovy \
 	 --input $< \
 	 --map $(word 2,$^) \
