@@ -131,6 +131,11 @@ digraph Makefile {
         shape = rect
     ]
     
+    exportlimit [
+        label = EXPORTLIMIT
+        shape = rect
+    ]
+    
     keys_statistic [ label = "keys-statistic" ]
     cluster_mapping [ label = "cluster-mapping" ]
     cluster_sorted_by_name [ label = "cluster-\nsorted-by-name" ]
@@ -157,5 +162,6 @@ digraph Makefile {
     excerpts_mapped -> excerpts, cluster_sorted_by_name
     bundle -> excerpts_mapped
     aggregate -> excerpts_mapped
+    aggregate -> exportlimit [ style = dotted ]
 }
 ```
