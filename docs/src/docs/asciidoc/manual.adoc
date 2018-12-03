@@ -150,7 +150,8 @@ Die Auslieferung der eigenständigen Distribution ist im folgenden Abschnitt erk
 
 === Distribution
 
-Die Verteilung der Software-Distribution die alle Komponenten enthält (JAR, Konfigurationsdateien und das Makefile) wird als ZIP-Archiv ausgeliefert. Der für die Groovy Skripte notwendige Groovy Interpreter und alle Java Abhängigkeiten sind ebenfalls im JAR enthalten.
+Die Verteilung der Software-Distribution die alle Komponenten enthält (JAR, Konfigurationsdateien und das Makefile) wird als ZIP-Archiv ausgeliefert.
+Der für die Groovy Skripte notwendige Groovy Interpreter und alle Abhängigkeiten die zum Ausführen der beigefügten Groovy Skripte notwendig sind, sind ebenfalls im JAR enthalten.
 
 Das ZIP-Archiv kann entpackt werden und enthält alle Abhängigkeiten die notwendig sind um das beigefügte Makefile auszuführen.
 Lediglich die Betriebsumgebung muss die Anforderungen im Abschnitt <<#umgebung>> erfüllen.
