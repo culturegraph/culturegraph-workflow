@@ -111,14 +111,13 @@ $(TARGETDIR)/keys.csv.gz:
 	@echo "[Build of $@]"
 	@echo
 
-	find $(DATADIR) -type f \
-	| grep "\.gz$$" \
-	| xargs gunzip -c \
-	| java $(JVM_OPTS) $(run-groovy) scripts/WorkflowKeys.groovy \
-	 --input - \
-	 --morph metamorph/ingestMarc21.xml \
-	 --morph metamorph/$(RULE).xml \
-	 --threads $(THREADS) \
+	find $(DATADIR) -type f -name "*\.gz" \
+	| xargs -I {} sh -c \
+	  "java $(JVM_OPTS) $(run-groovy) scripts/WorkflowKeys.groovy \
+	   --input {} \
+	   --morph metamorph/ingestMarc21.xml \
+	   --morph metamorph/$(RULE).xml \
+	   --threads $(THREADS)" \
 	| gzip\
 	> $@
 
@@ -138,15 +137,14 @@ $(TARGETDIR)/keys-statistic.csv.gz:
 	@echo "[Build of $@]"
 	@echo
 
-	find $(DATADIR) -type f \
-	| grep "\.gz$$" \
-	| xargs gunzip -c \
-	| java $(run-groovy) scripts/WorkflowKeysStatistic.groovy \
-	 --input - \
-	 --morph metamorph/ingestMarc21.xml \
-	 --morph metamorph/$(RULE).xml \
-	 --xsl xslt/keyStatistic.xsl \
-	 --threads $(THREADS) \
+	find $(DATADIR) -type f -name "*\.gz" \
+	| xargs -I {} sh -c \
+	  "java $(JVM_OPTS) $(run-groovy) scripts/WorkflowKeysStatistic.groovy \
+	   --input {} \
+	   --morph metamorph/ingestMarc21.xml \
+	   --morph metamorph/$(RULE).xml \
+	   --xsl xslt/keyStatistic.xsl \
+	   --threads $(THREADS)" \
 	| gzip\
 	> $@
 
@@ -338,14 +336,13 @@ $(TARGETDIR)/excerpts.mrc.csv.gz:
 	@echo "[Build of $@]"
 	@echo
 
-	find $(DATADIR) -type f \
-	| grep "\.gz$$" \
-	| xargs gunzip -c \
-	| java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerpts.groovy \
-	 --input - \
-	 --id-morph metamorph/gviId.xml \
-	 --excerpt-morph metamorph/excerpt.xml \
-	 --threads $(THREADS) \
+	find $(DATADIR) -type f -name "*\.gz" \
+	| xargs -I {} sh -c \
+	  "java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerpts.groovy \
+	   --input {} \
+	   --id-morph metamorph/gviId.xml \
+	   --excerpt-morph metamorph/excerpt.xml \
+	   --threads $(THREADS)" \
 	| LC_ALL=C sort --unique -k1,1 -S3G --compress-program=gzip\
 	| gzip\
 	> $@
