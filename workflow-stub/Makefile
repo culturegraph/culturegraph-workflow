@@ -14,6 +14,11 @@ DATADIR = ./testdata
 #
 TARGETDIR = ./target
 
+# TMPDIR
+# Directory that is used for sort command
+#
+TMPDIR = /tmp
+
 # THREADS
 # Number of parallel threads
 #
@@ -81,6 +86,7 @@ help:
 	@echo "DATADIR     : Directory with gzip compressed input data in Marc21 (Default: $(DATADIR))."
 	@echo "RULENAME    : Behaviour for key generation. Choose: [wrk] (Default: $(RULE))."
 	@echo "TARGETDIR   : Directory that contains build results (Default: $(TARGETDIR))."
+	@echo "TMPDIR      : Direcotry that is used when sorting (Default: $(TMPDIR))."
 	@echo "THREADS     : Number of parallel threads (Default: $(THREADS))."
 	@echo "EXPORTLIMIT : Maximum size for aggregated record (Default: $(EXPORTLIMIT)). Affects only build step 'aggregate'."
 
@@ -198,7 +204,7 @@ $(TARGETDIR)/cluster-sorted-by-name.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
 	@echo
 
 	gunzip -c $<\
-	| LC_ALL=C sort -k1,1 -S3G --compress-program=gzip\
+	| LC_ALL=C sort -T $(TMPDIR) -k1,1 -S3G --compress-program=gzip\
 	| gzip\
 	> $@
 
@@ -213,7 +219,7 @@ $(TARGETDIR)/cluster-sorted-by-value.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
 	@echo
 
 	gunzip -c $<\
-	| LC_ALL=C sort -n -k2,2 -S3G --compress-program=gzip\
+	| LC_ALL=C sort -T $(TMPDIR) -n -k2,2 -S3G --compress-program=gzip\
 	| gzip\
 	> $@
 
@@ -252,7 +258,7 @@ $(TARGETDIR)/cluster-size.csv.gz: $(TARGETDIR)/cluster-mapping.csv.gz
 
 	gunzip -c $<\
 	| cut -d" " -f2\
-	| sort -n -S3G --compress-program=gzip\
+	| sort -T $(TMPDIR) -n -S3G --compress-program=gzip\
 	| uniq -c\
 	| awk '{print "cluster " $$2 " size " $$1}'\
 	| gzip\
@@ -270,7 +276,7 @@ $(TARGETDIR)/cluster-size-frequency.csv.gz: $(TARGETDIR)/cluster-size.csv.gz
 
 	gunzip -c $<\
 	| cut -d" " -f4\
-	| sort -n -S3G --compress-program=gzip\
+	| sort -T $(TMPDIR) -n -S3G --compress-program=gzip\
 	| uniq -c\
 	| awk '{print  "size " $$2 " freq " $$1}'\
 	| gzip\
@@ -343,7 +349,7 @@ $(TARGETDIR)/excerpts.mrc.csv.gz:
 	   --id-morph metamorph/gviId.xml \
 	   --excerpt-morph metamorph/excerpt.xml \
 	   --threads $(THREADS)" \
-	| LC_ALL=C sort --unique -k1,1 -S3G --compress-program=gzip\
+	| LC_ALL=C sort -T $(TMPDIR) --unique -k1,1 -S3G --compress-program=gzip\
 	| gzip\
 	> $@
 
@@ -364,7 +370,7 @@ $(TARGETDIR)/excerpts-mapped.mrc.csv.gz: $(TARGETDIR)/excerpts.mrc.csv.gz $(TARG
 	java $(JVM_OPTS) $(run-groovy) scripts/WorkflowExcerptsMapping.groovy \
 	 --input $< \
 	 --map $(word 2,$^) \
-	| LC_ALL=C sort --numeric-sort -S3G -k1,1 --compress-program=gzip\
+	| LC_ALL=C sort -T $(TMPDIR) --numeric-sort -S3G -k1,1 --compress-program=gzip\
 	| gzip\
 	> $@
 

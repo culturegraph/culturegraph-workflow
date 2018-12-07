@@ -88,6 +88,7 @@ Parameter table:
 | JVM_HEAVY_TASK | JVM options for tasks that need a lot of resources <br> (Default: `-Xmx12g -XX:+UseCompressedOops -XX:+UseG1GC`).
 | RULENAME | Rule set for key generation <br> (Choose: [`wrk`], Default: `wrk`). |
 | TARGETDIR |  Directory that contains build results <br> (Default: `./target`). |
+| TMPDIR |  Directory that is used for sort command <br> (Default: `/tmp`). |
 | THREADS | Parallel execution parameter for some data processing steps <br> (Default: `1`). |
 | EXPORTLIMIT | Limits the number of records per aggregated record for the _aggregate_ build step. <br> If the number of records that should be aggregated exceed this limit, *no* aggregated record will be produced. <br> (Default: `-1`, Prosa: unlimited).|
 
