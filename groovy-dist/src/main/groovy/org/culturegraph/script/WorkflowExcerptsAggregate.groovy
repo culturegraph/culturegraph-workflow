@@ -86,6 +86,7 @@ Charset utf8 = StandardCharsets.UTF_8
 OutputStream outputStream = useStdout ? System.out : new FileOutputStream(options.o as String)
 outputStream.withCloseable { out ->
     MarcXmlWriter marcXmlWriter = new MarcXmlWriter(out, true)
+    marcXmlWriter.checkNonXMLChars = true
     InputStream inputStream = DecompressedInputStream.of(new FileInputStream(input))
     inputStream.withReader { new BufferedReader(it).withCloseable { reader ->
 
