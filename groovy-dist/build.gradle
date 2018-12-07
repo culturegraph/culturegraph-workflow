@@ -7,7 +7,7 @@ plugins {
 dependencies {
     api project(':layers')
     implementation 'com.github.culturegraph:culturegraph-clustering:v0.3.0'
-    implementation 'com.github.culturegraph:culturegraph-record-aggregator:v0.2.2'
+    implementation 'com.github.culturegraph:culturegraph-record-aggregator:v0.2.3'
     implementation 'com.github.metafacture:metafacture-csv-plugin:v0.4.0'
     implementation 'de.odysseus.staxon:staxon:1.3'
     implementation 'org.codehaus.groovy:groovy-all:2.5.2'
@@ -40,7 +40,7 @@ task distGroovy(type: Jar) {
         }
 
         compile 'com.github.culturegraph:culturegraph-clustering:v0.3.0'
-        compile 'com.github.culturegraph:culturegraph-record-aggregator:v0.2.2'
+        compile 'com.github.culturegraph:culturegraph-record-aggregator:v0.2.3'
         compile 'com.github.metafacture:metafacture-csv-plugin:v0.4.0'
         compile 'de.odysseus.staxon:staxon:1.3'
         compile 'org.metafacture:metafacture-biblio:5.0.0'
